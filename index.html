@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tool Crib Management v5</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#f8fafc;--white:#fff;--text:#0f172a;--text2:#475569;
+  --border:#e2e8f0;--primary:#0f4c81;--accent:#f59e0b;
+  --danger:#ef4444;--danger-light:#fef2f2;
+  --success:#10b981;--success-light:#ecfdf5;
+  --warning:#f97316;--info:#6366f1;--info-light:#eef2ff;
+  --sw:235px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.shell{display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sw);background:var(--primary);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow-y:auto;transition:transform .3s;}
+.logo{padding:1.4rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.1);}
+.logo-icon{font-size:1.8rem;display:block;margin-bottom:.3rem;}
+.logo h1{color:#fff;font-size:1rem;font-weight:800;line-height:1.2;}
+.logo p{color:rgba(255,255,255,.45);font-size:.6rem;font-family:'JetBrains Mono',monospace;margin-top:.2rem;letter-spacing:.08em;}
+.logo-ver{font-size:.55rem;background:rgba(255,255,255,.15);color:rgba(255,255,255,.7);padding:.1rem .4rem;border-radius:4px;display:inline-block;margin-top:.3rem;font-family:'JetBrains Mono',monospace;}
+.nav-sec{padding:.9rem 1.2rem .25rem;font-size:.58rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.65rem 1.2rem;color:rgba(255,255,255,.65);cursor:pointer;font-size:.83rem;font-weight:600;transition:all .15s;border-left:3px solid transparent;}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-item.active{background:rgba(255,255,255,.13);color:#fff;border-left-color:var(--accent);}
+.ni{font-size:.95rem;width:18px;text-align:center;}
+
+/* MAIN */
+.main{margin-left:var(--sw);flex:1;padding:2rem;}
+.page{display:none;animation:fadeIn .3s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.pg-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+.pg-title{font-size:1.45rem;font-weight:800;}
+.pg-sub{font-size:.78rem;color:var(--text2);margin-top:.15rem;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--white);border-radius:12px;padding:1.1rem;border:1px solid var(--border);display:flex;align-items:center;gap:.9rem;transition:transform .2s;}
+.stat-card:hover{transform:translateY(-2px);}
+.sc-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.sc-num{font-size:1.55rem;font-weight:800;line-height:1;font-family:'JetBrains Mono',monospace;}
+.sc-label{font-size:.7rem;color:var(--text2);font-weight:600;margin-top:.2rem;}
+
+/* OVERDUE BLINK */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.overdue-blink{animation:blink 1.4s infinite;}
+
+/* FORM */
+.form-card{background:var(--white);border-radius:14px;padding:1.5rem;border:1px solid var(--border);margin-bottom:1.5rem;}
+.form-card h3{font-size:.92rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.4rem;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.2rem;}
+.field{position:relative;}
+.field label{display:block;font-size:.7rem;font-weight:700;color:var(--text2);margin-bottom:.28rem;text-transform:uppercase;letter-spacing:.05em;}
+.field input,.field select,.field textarea{width:100%;padding:.58rem .82rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;background:var(--bg);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,76,129,.08);}
+.field input[readonly]{background:#f1f5f9;color:#334155;cursor:default;border-color:#cbd5e1;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+.field textarea{resize:vertical;min-height:60px;}
+
+/* AUTO BADGE */
+.auto-badge{display:inline-block;font-size:.58rem;font-family:'JetBrains Mono',monospace;background:#dbeafe;color:#1e40af;padding:.1rem .38rem;border-radius:4px;margin-left:.35rem;vertical-align:middle;font-weight:700;}
+.fill-badge{background:#dcfce7;color:#166534;}
+
+/* AUTOCOMPLETE */
+.ac-wrap{position:relative;}
+.ac-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--primary);border-top:none;border-radius:0 0 8px 8px;z-index:400;max-height:200px;overflow-y:auto;box-shadow:0 8px 20px rgba(0,0,0,.12);display:none;}
+.ac-dropdown.show{display:block;}
+.ac-item{padding:.52rem .82rem;font-size:.82rem;cursor:pointer;transition:background .12s;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;}
+.ac-item:last-child{border-bottom:none;}
+.ac-item:hover,.ac-item.ac-active{background:#e8f0fb;color:var(--primary);font-weight:600;}
+.ac-item mark{background:transparent;color:var(--primary);font-weight:800;}
+.ac-item .ac-code{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#64748b;background:#f1f5f9;padding:.1rem .35rem;border-radius:4px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.58rem 1.15rem;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--primary);color:#fff;}.btn-primary:hover{background:#0a3d6b;}
+.btn-success{background:var(--success);color:#fff;}.btn-success:hover{background:#059669;}
+.btn-warning{background:var(--accent);color:#fff;}.btn-warning:hover{background:#d97706;}
+.btn-danger{background:var(--danger);color:#fff;}.btn-danger:hover{background:#dc2626;}
+.btn-outline{background:#fff;color:var(--text);border:1.5px solid var(--border);}.btn-outline:hover{border-color:var(--primary);color:var(--primary);}
+.btn-info{background:var(--info);color:#fff;}.btn-info:hover{background:#4f46e5;}
+.btn-teal{background:#0d9488;color:#fff;}.btn-teal:hover{background:#0f766e;}
+.btn-row{display:flex;gap:.7rem;flex-wrap:wrap;}
+
+/* TABLE */
+.table-card{background:var(--white);border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+.table-toolbar{padding:.9rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+.table-toolbar h3{font-size:.92rem;font-weight:700;}
+.search-box{display:flex;align-items:center;gap:.45rem;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.42rem .75rem;}
+.search-box:focus-within{border-color:var(--primary);}
+.search-box input{border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;outline:none;width:180px;color:var(--text);}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--bg);}
+th{padding:.68rem .85rem;text-align:left;font-size:.66rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+td{padding:.65rem .85rem;font-size:.79rem;border-top:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:#f8fafc;}
+
+/* BADGES */
+.badge{display:inline-block;padding:.18rem .55rem;border-radius:20px;font-size:.65rem;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.badge-issued{background:#fffbeb;color:#92400e;}
+.badge-returned{background:var(--success-light);color:#065f46;}
+.badge-overdue{background:var(--danger-light);color:#991b1b;}
+.badge-good{background:var(--success-light);color:#065f46;}
+.badge-damaged{background:var(--danger-light);color:#991b1b;}
+.badge-morning{background:#fef3c7;color:#92400e;}
+.badge-evening{background:#ede9fe;color:#4c1d95;}
+.badge-night{background:#1e293b;color:#94a3b8;}
+
+/* ACTION BTNS */
+.action-btns{display:flex;gap:.35rem;}
+.btn-sm{padding:.28rem .52rem;border-radius:6px;font-size:.69rem;font-weight:700;cursor:pointer;border:none;transition:all .15s;}
+.btn-sm-return{background:var(--success-light);color:#065f46;}.btn-sm-return:hover{background:var(--success);color:#fff;}
+.btn-sm-edit{background:var(--info-light);color:var(--info);}.btn-sm-edit:hover{background:var(--info);color:#fff;}
+.btn-sm-del{background:var(--danger-light);color:var(--danger);}.btn-sm-del:hover{background:var(--danger);color:#fff;}
+.btn-sm-print{background:#f0fdf4;color:#16a34a;}.btn-sm-print:hover{background:#16a34a;color:#fff;}
+.empty-row td{text-align:center;padding:2.5rem;color:var(--text2);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:1.8rem;width:90%;max-width:520px;animation:fadeIn .25s ease;position:relative;max-height:90vh;overflow-y:auto;}
+.modal h3{font-size:1.05rem;font-weight:800;margin-bottom:1.2rem;}
+.modal-close{position:absolute;top:.9rem;right:.9rem;background:var(--bg);border:none;border-radius:50%;width:30px;height:30px;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+/* LOGIN SCREEN */
+.login-screen{position:fixed;inset:0;background:var(--primary);z-index:9999;display:flex;align-items:center;flex-direction:column;overflow-y:auto;padding-bottom:2rem;}
+.login-screen.hide{display:none;}
+.login-logo{text-align:center;color:#fff;padding:2rem 1rem 1.2rem;}
+.login-logo .pl-icon{font-size:2.8rem;display:block;margin-bottom:.4rem;}
+.login-logo h2{font-size:1.4rem;font-weight:800;}
+.login-logo p{font-size:.78rem;color:rgba(255,255,255,.5);margin-top:.25rem;}
+.user-select-wrap{width:100%;max-width:500px;padding:0 1.2rem 1.5rem;}
+.user-select-wrap h3{color:rgba(255,255,255,.6);font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem;text-align:center;}
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.7rem;}
+.user-card{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.15);border-radius:12px;padding:1rem .8rem;text-align:center;cursor:pointer;transition:all .18s;color:#fff;}
+.user-card:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.4);transform:translateY(-2px);}
+.user-card .uc-avatar{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin:0 auto .5rem;}
+.user-card .uc-name{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-card .uc-last{font-size:.6rem;color:rgba(255,255,255,.4);margin-top:.15rem;font-family:'JetBrains Mono',monospace;}
+.no-users-msg{text-align:center;color:rgba(255,255,255,.45);font-size:.82rem;padding:2rem;grid-column:1/-1;}
+.pin-entry-wrap{width:100%;max-width:300px;padding:0 1.2rem 2rem;text-align:center;}
+.pin-entry-user{color:#fff;margin-bottom:1.1rem;}
+.pin-entry-user .peu-avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto .5rem;}
+.pin-entry-user .peu-name{font-size:1.1rem;font-weight:800;}
+.pin-entry-user .peu-sub{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.15rem;}
+.pin-box{background:rgba(255,255,255,.1);border-radius:16px;padding:1.5rem;text-align:center;}
+.pin-dots{display:flex;justify-content:center;gap:.7rem;margin-bottom:1.2rem;}
+.pin-dot{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .2s;}
+.pin-dot.filled{background:#fff;}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.55rem;}
+.pin-btn{background:rgba(255,255,255,.15);border:none;border-radius:10px;padding:.85rem;font-size:1.05rem;font-weight:700;color:#fff;cursor:pointer;transition:background .15s;font-family:'Plus Jakarta Sans',sans-serif;}
+.pin-btn:hover{background:rgba(255,255,255,.25);}
+.pin-btn:active{background:rgba(255,255,255,.38);}
+.pin-error{color:#fca5a5;font-size:.76rem;font-weight:600;min-height:1rem;margin-top:.4rem;}
+.pin-back-link{color:rgba(255,255,255,.5);font-size:.73rem;cursor:pointer;margin-top:.65rem;display:inline-block;text-decoration:underline;}
+.pin-back-link:hover{color:#fff;}
+/* Logged-in bar in sidebar */
+.logged-bar{margin:.5rem 1.2rem .2rem;background:rgba(255,255,255,.1);border-radius:8px;padding:.5rem .75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.logged-bar .lb-info{display:flex;align-items:center;gap:.45rem;}
+.logged-bar .lb-avatar{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;}
+.logged-bar .lb-name{color:#fff;font-size:.78rem;font-weight:700;}
+.logged-bar .lb-time{color:rgba(255,255,255,.45);font-size:.6rem;font-family:'JetBrains Mono',monospace;}
+.logged-bar button{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.8);font-size:.62rem;font-weight:700;padding:.22rem .5rem;border-radius:5px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;}
+.logged-bar button:hover{background:rgba(255,255,255,.28);color:#fff;}
+/* User management in settings */
+.user-mgmt-list{max-height:220px;overflow-y:auto;margin-top:.75rem;}
+.user-mgmt-item{display:flex;justify-content:space-between;align-items:center;padding:.5rem .7rem;background:var(--bg);border-radius:8px;margin-bottom:.4rem;font-size:.8rem;}
+.user-mgmt-item .umi-name{font-weight:700;}
+.user-mgmt-item .umi-role{font-size:.65rem;color:var(--text2);font-family:'JetBrains Mono',monospace;background:#e2e8f0;padding:.1rem .35rem;border-radius:4px;margin-left:.35rem;}
+.user-mgmt-item .umi-actions{display:flex;gap:.35rem;}
+.user-mgmt-item .umi-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:.18rem .45rem;font-size:.68rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all .15s;}
+.user-mgmt-item .umi-btn:hover{background:var(--danger-light);color:var(--danger);border-color:var(--danger);}
+.user-mgmt-item .umi-btn.edit-btn:hover{background:var(--info-light);color:var(--info);border-color:var(--info);}
+.add-user-form{background:var(--bg);border-radius:10px;padding:.9rem;margin-top:.75rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.add-user-form input{padding:.45rem .6rem;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;outline:none;font-family:'Plus Jakarta Sans',sans-serif;}
+.add-user-form input:focus{border-color:var(--primary);}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem;margin-top:1.5rem;}
+.chart-card{background:var(--white);border-radius:14px;padding:1.2rem;border:1px solid var(--border);}
+.chart-card h4{font-size:.85rem;font-weight:700;margin-bottom:.9rem;color:var(--text2);}
+.chart-wrap{position:relative;height:210px;}
+
+/* FILTER */
+.filter-row{display:flex;gap:.7rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center;}
+.filter-row select,.filter-row input{padding:.42rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;background:#fff;color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+.filter-row input[type=date]{cursor:pointer;}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;}
+.settings-card{background:var(--white);border-radius:14px;padding:1.5rem;border:1px solid var(--border);}
+.settings-card h3{font-size:.95rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem;}
+.settings-card p{font-size:.75rem;color:var(--text2);margin-bottom:1rem;}
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);}
+.upload-zone:hover{border-color:var(--primary);background:#e8f0fb;}
+.upload-zone input[type=file]{display:none;}
+.upload-zone .uz-icon{font-size:2rem;margin-bottom:.5rem;}
+.upload-zone p{font-size:.8rem;color:var(--text2);margin:0;}
+.upload-zone .uz-hint{font-size:.7rem;color:#94a3b8;margin-top:.3rem;}
+.master-list{max-height:200px;overflow-y:auto;margin-top:.75rem;}
+.master-item{display:flex;justify-content:space-between;align-items:center;padding:.45rem .7rem;background:var(--bg);border-radius:6px;margin-bottom:.35rem;font-size:.8rem;}
+.master-item .mi-code{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);background:#e2e8f0;padding:.1rem .35rem;border-radius:4px;}
+.master-item .mi-del{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:.85rem;padding:.1rem .3rem;border-radius:4px;transition:color .15s;}
+.master-item .mi-del:hover{color:var(--danger);}
+.add-manual{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;}
+.add-manual input{flex:1;min-width:100px;padding:.5rem .7rem;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;outline:none;font-family:'Plus Jakarta Sans',sans-serif;}
+.add-manual input:focus{border-color:var(--primary);}
+.count-pill{display:inline-block;background:var(--primary);color:#fff;font-size:.65rem;font-family:'JetBrains Mono',monospace;font-weight:700;padding:.12rem .45rem;border-radius:10px;margin-left:.4rem;}
+
+/* User settings legacy placeholder */
+
+/* TOAST */
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;background:var(--text);color:#fff;padding:.75rem 1.3rem;border-radius:10px;font-size:.82rem;font-weight:600;z-index:1000;transform:translateY(100px);opacity:0;transition:all .3s;display:flex;align-items:center;gap:.45rem;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{background:var(--success);}
+.toast.error{background:var(--danger);}
+
+/* AUDIT LOG */
+.audit-item{padding:.6rem .9rem;border-radius:8px;background:var(--bg);margin-bottom:.4rem;font-size:.78rem;border-left:3px solid var(--border);}
+.audit-item.audit-issue{border-left-color:var(--accent);}
+.audit-item.audit-return{border-left-color:var(--success);}
+.audit-item.audit-edit{border-left-color:var(--info);}
+.audit-item.audit-delete{border-left-color:var(--danger);}
+.audit-time{font-size:.68rem;color:var(--text2);font-family:'JetBrains Mono',monospace;margin-top:.2rem;}
+
+/* ISSUE SLIP PRINT */
+@media print{
+  .no-print,.sidebar,.btn,.action-btns,.btn-row,.filter-row,.hamburger,.overlay,.nav-item,.logo,.pin-screen{display:none!important;}
+  .main{margin-left:0!important;padding:0!important;}
+  .table-card{border:none;}
+  .slip-only{display:block!important;}
+}
+.slip-only{display:none;}
+.slip-modal .modal{max-width:400px;}
+.slip-content{font-family:'Plus Jakarta Sans',sans-serif;padding:.5rem;}
+.slip-header{text-align:center;border-bottom:2px solid var(--text);padding-bottom:.8rem;margin-bottom:.8rem;}
+.slip-header h2{font-size:1.1rem;font-weight:800;}
+.slip-header p{font-size:.75rem;color:var(--text2);}
+.slip-row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.8rem;border-bottom:1px dashed var(--border);}
+.slip-row:last-child{border-bottom:none;}
+.slip-label{font-weight:700;color:var(--text2);}
+.slip-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+.slip-footer{text-align:center;margin-top:.8rem;font-size:.72rem;color:var(--text2);border-top:1px solid var(--border);padding-top:.6rem;}
+.slip-sign{display:flex;justify-content:space-between;margin-top:1.5rem;font-size:.72rem;}
+.slip-sign div{text-align:center;}
+.slip-sign .sign-line{width:100px;border-top:1px solid var(--text);margin:0 auto .2rem;}
+
+/* SHIFT BADGE */
+.shift-select{padding:.42rem .75rem;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;background:#fff;color:var(--text);outline:none;font-family:'Plus Jakarta Sans',sans-serif;}
+
+/* TOOL SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1rem;}
+.summary-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem;}
+.summary-card h4{font-size:.82rem;font-weight:700;margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.summary-stat{display:flex;justify-content:space-between;font-size:.76rem;padding:.2rem 0;color:var(--text2);}
+.summary-stat span:last-child{font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;}
+
+/* HAMBURGER */
+.hamburger{display:none;position:fixed;top:1rem;left:1rem;z-index:200;background:var(--primary);color:#fff;border:none;border-radius:8px;padding:.5rem .7rem;font-size:1.1rem;cursor:pointer;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:90;}
+
+/* DIVIDER */
+.section-divider{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
+
+@media(max-width:768px){
+  .hamburger{display:block;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .overlay.show{display:block;}
+  .main{margin-left:0;padding:4.5rem 1rem 2rem;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- MULTI-USER LOGIN SCREEN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-logo">
+    <span class="pl-icon">🔧</span>
+    <h2>Tool Crib Management</h2>
+    <p>ISSUE & RETURN SYSTEM · v5.0</p>
+  </div>
+  <!-- Step 1: Select user -->
+  <div class="user-select-wrap" id="login-step1">
+    <h3>Select your account</h3>
+    <div class="user-grid" id="user-grid-list"></div>
+  </div>
+  <!-- Step 2: Enter PIN -->
+  <div class="pin-entry-wrap" id="login-step2" style="display:none">
+    <div class="pin-entry-user">
+      <div class="peu-avatar" id="peu-avatar">👤</div>
+      <div class="peu-name" id="peu-name">—</div>
+      <div class="peu-sub">Enter your 4-digit PIN</div>
+    </div>
+    <div class="pin-box">
+      <div class="pin-dots">
+        <div class="pin-dot" id="pd0"></div>
+        <div class="pin-dot" id="pd1"></div>
+        <div class="pin-dot" id="pd2"></div>
+        <div class="pin-dot" id="pd3"></div>
+      </div>
+      <div class="pin-grid">
+        <button class="pin-btn" onclick="pinPress('1')">1</button>
+        <button class="pin-btn" onclick="pinPress('2')">2</button>
+        <button class="pin-btn" onclick="pinPress('3')">3</button>
+        <button class="pin-btn" onclick="pinPress('4')">4</button>
+        <button class="pin-btn" onclick="pinPress('5')">5</button>
+        <button class="pin-btn" onclick="pinPress('6')">6</button>
+        <button class="pin-btn" onclick="pinPress('7')">7</button>
+        <button class="pin-btn" onclick="pinPress('8')">8</button>
+        <button class="pin-btn" onclick="pinPress('9')">9</button>
+        <button class="pin-btn" onclick="pinBackspace()" style="opacity:.7">⌫</button>
+        <button class="pin-btn" onclick="pinPress('0')">0</button>
+        <button class="pin-btn" onclick="pinPress('')" style="opacity:.4">✕</button>
+      </div>
+      <div class="pin-error" id="pin-error"></div>
+    </div>
+    <span class="pin-back-link" onclick="goLoginStep1()">← Back to user list</span>
+  </div>
+</div>
+
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="shell">
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="logo">
+    <span class="logo-icon">🔧</span>
+    <h1>Tool Crib<br>Management</h1>
+    <p>ISSUE & RETURN SYSTEM</p>
+    <span class="logo-ver">v5.0</span>
+  </div>
+  <!-- Logged-in user bar -->
+  <div class="logged-bar" id="logged-bar">
+    <div class="lb-info">
+      <div class="lb-avatar" id="lb-avatar">👤</div>
+      <div>
+        <div class="lb-name" id="lb-name">—</div>
+        <div class="lb-time" id="lb-time"></div>
+      </div>
+    </div>
+    <button onclick="logoutUser()">🔒 Logout</button>
+  </div>
+  <div class="nav-sec">Main</div>
+  <div class="nav-item active" onclick="goPage('dashboard',this)"><span class="ni">📊</span> Dashboard</div>
+  <div class="nav-item" onclick="goPage('issue',this)"><span class="ni">📤</span> Issue Tool</div>
+  <div class="nav-item" onclick="goPage('return',this)"><span class="ni">📥</span> Return Tool</div>
+  <div class="nav-sec">Records</div>
+  <div class="nav-item" onclick="goPage('master',this)"><span class="ni">📋</span> Master Data</div>
+  <div class="nav-item" onclick="goPage('overdue',this)"><span class="ni">⚠️</span> Overdue Tools</div>
+  <div class="nav-sec">Reports</div>
+  <div class="nav-item" onclick="goPage('charts',this)"><span class="ni">📈</span> Charts</div>
+  <div class="nav-item" onclick="goPage('toolsummary',this)"><span class="ni">🔩</span> Tool Summary</div>
+  <div class="nav-item" onclick="goPage('shift',this)"><span class="ni">🕐</span> Shift Report</div>
+  <div class="nav-item" onclick="goPage('employee',this)"><span class="ni">👷</span> Employee History</div>
+  <div class="nav-item" onclick="goPage('audit',this)"><span class="ni">📜</span> Audit Log</div>
+  <div class="nav-sec">Setup</div>
+  <div class="nav-item" onclick="goPage('settings',this)"><span class="ni">⚙️</span> Settings & Upload</div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="pg-hdr">
+    <div><div class="pg-title">Dashboard 📊</div><div class="pg-sub" id="dash-date"></div></div>
+    <div class="btn-row">
+      <button class="btn btn-teal" onclick="backupData()">💾 Backup</button>
+      <button class="btn btn-warning" onclick="downloadExcel()">⬇️ Excel</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="sc-icon" style="background:#e8f0fb">📤</div><div><div class="sc-num" id="stat-today" style="color:var(--primary)">0</div><div class="sc-label">Issued Today</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#ecfdf5">✅</div><div><div class="sc-num" id="stat-returned" style="color:var(--success)">0</div><div class="sc-label">Returned Today</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#fef2f2">⚠️</div><div><div class="sc-num overdue-blink" id="stat-overdue" style="color:var(--danger)">0</div><div class="sc-label">Overdue</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#fff7ed">🔧</div><div><div class="sc-num" id="stat-active" style="color:var(--warning)">0</div><div class="sc-label">Currently Issued</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#f5f3ff">📦</div><div><div class="sc-num" id="stat-total" style="color:var(--info)">0</div><div class="sc-label">Total Records</div></div></div>
+  </div>
+  <!-- Overdue Alert Banner -->
+  <div id="overdue-banner" style="display:none;background:var(--danger-light);border:1.5px solid var(--danger);border-radius:10px;padding:.8rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.7rem;font-size:.82rem;font-weight:600;color:#991b1b;">
+    <span style="font-size:1.2rem" class="overdue-blink">🔴</span>
+    <span id="overdue-banner-text"></span>
+  </div>
+  <div class="table-card">
+    <div class="table-toolbar"><h3>🕐 Recent Activity (Last 10)</h3></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Employee</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date & Time</th><th>Status</th></tr></thead>
+        <tbody id="recent-tbody"><tr class="empty-row"><td colspan="10">No records yet. Start issuing tools!</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ISSUE TOOL -->
+<div class="page" id="page-issue">
+  <div class="pg-hdr"><div><div class="pg-title">📤 Issue Tool</div><div class="pg-sub">Issue a tool to an employee</div></div></div>
+  <div class="form-card">
+    <h3>🧑‍🔧 Employee Details</h3>
+    <div class="form-grid">
+      <div class="field ac-wrap">
+        <label>Employee Name *</label>
+        <input id="i-empname" type="text" placeholder="Type to search employee..." autocomplete="off"
+          oninput="showEmpSuggestions(this,'ac-empname')"
+          onkeydown="acKeyNav(event,'ac-empname','emp')"
+          onblur="setTimeout(()=>hideAC('ac-empname'),200)">
+        <div class="ac-dropdown" id="ac-empname"></div>
+      </div>
+      <div class="field">
+        <label>Employee ID <span class="auto-badge fill-badge">AUTO FILL</span></label>
+        <input id="i-empid" type="text" placeholder="Auto-filled on name select" readonly>
+      </div>
+    </div>
+    <h3>🔧 Tool Details</h3>
+    <div class="form-grid">
+      <div class="field ac-wrap">
+        <label>Tool Name *</label>
+        <input id="i-toolname" type="text" placeholder="Type to search tool..." autocomplete="off"
+          oninput="showToolSuggestions(this,'ac-toolname')"
+          onkeydown="acKeyNav(event,'ac-toolname','tool')"
+          onblur="setTimeout(()=>hideAC('ac-toolname'),200)">
+        <div class="ac-dropdown" id="ac-toolname"></div>
+      </div>
+      <div class="field">
+        <label>Tool Code <span class="auto-badge fill-badge">AUTO FILL</span></label>
+        <input id="i-toolcode" type="text" placeholder="Auto-filled on tool select" readonly>
+      </div>
+      <div class="field"><label>Book No *</label><input id="i-bookno" type="text" placeholder="e.g. BK-001" autocomplete="off"></div>
+      <div class="field"><label>Page No *</label><input id="i-pageno" type="text" placeholder="e.g. 42" autocomplete="off"></div>
+      <div class="field"><label>Quantity *</label><input id="i-qty" type="number" min="1" placeholder="1" value="1"></div>
+      <div class="field">
+        <label>Shift *</label>
+        <select id="i-shift">
+          <option value="Morning">🌅 Morning</option>
+          <option value="Evening">🌆 Evening</option>
+          <option value="Night">🌙 Night</option>
+        </select>
+      </div>
+      <div class="field"><label>Issue Date <span class="auto-badge">AUTO</span></label><input id="i-date" type="text" readonly></div>
+      <div class="field"><label>Issue Time <span class="auto-badge">AUTO</span></label><input id="i-time" type="text" readonly></div>
+      <div class="field" style="grid-column:1/-1"><label>Remarks</label><textarea id="i-remarks" placeholder="Any notes about this issue..."></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="issueToolSave()">📤 Issue Tool & Save</button>
+      <button class="btn btn-outline" onclick="clearIssueForm()">🔄 Clear</button>
+    </div>
+  </div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <h3>📋 Currently Issued Tools</h3>
+      <div class="search-box"><span>🔍</span><input id="issue-search" type="text" placeholder="Search..." oninput="renderIssued()"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date</th><th>Issue Time</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="issued-tbody"><tr class="empty-row"><td colspan="13">No currently issued tools.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- RETURN TOOL -->
+<div class="page" id="page-return">
+  <div class="pg-hdr"><div><div class="pg-title">📥 Return Tool</div><div class="pg-sub">Mark tool as returned</div></div></div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <h3>🔧 Tools Pending Return</h3>
+      <div class="search-box"><span>🔍</span><input id="return-search" type="text" placeholder="Search..." oninput="renderPendingReturn()"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date & Time</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="return-tbody"><tr class="empty-row"><td colspan="12">No tools pending return. 🎉</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MASTER DATA -->
+<div class="page" id="page-master">
+  <div class="pg-hdr">
+    <div><div class="pg-title">📋 Master Data</div><div class="pg-sub">All tool transactions</div></div>
+    <div class="btn-row">
+      <button class="btn btn-warning" onclick="downloadExcel()">⬇️ Excel</button>
+      <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+    </div>
+  </div>
+  <div class="filter-row">
+    <select id="master-filter-status" onchange="renderMaster()">
+      <option value="all">All Status</option>
+      <option value="Issued">Issued</option>
+      <option value="Returned">Returned</option>
+      <option value="Overdue">Overdue</option>
+    </select>
+    <select id="master-filter-condition" onchange="renderMaster()">
+      <option value="all">All Conditions</option>
+      <option value="Good">Good</option>
+      <option value="Damaged">Damaged</option>
+    </select>
+    <select id="master-filter-shift" onchange="renderMaster()">
+      <option value="all">All Shifts</option>
+      <option value="Morning">Morning</option>
+      <option value="Evening">Evening</option>
+      <option value="Night">Night</option>
+    </select>
+    <input type="date" id="master-filter-from" onchange="renderMaster()" title="From Date">
+    <input type="date" id="master-filter-to" onchange="renderMaster()" title="To Date">
+    <button class="btn btn-outline" style="padding:.38rem .75rem;font-size:.75rem" onclick="clearMasterFilters()">✕ Clear Filters</button>
+  </div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <h3>📊 All Records <span id="master-count" style="font-size:.73rem;color:var(--text2);font-weight:500"></span></h3>
+      <div class="search-box"><span>🔍</span><input id="master-search" type="text" placeholder="Search..." oninput="renderMaster()"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date</th><th>Issue Time</th><th>Return Date</th><th>Return Time</th><th>Status</th><th>Condition</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="master-tbody"><tr class="empty-row"><td colspan="17">No records found.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- OVERDUE -->
+<div class="page" id="page-overdue">
+  <div class="pg-hdr"><div><div class="pg-title">⚠️ Overdue Tools</div><div class="pg-sub">Tools not returned within threshold</div></div>
+  <div class="btn-row">
+    <div style="display:flex;align-items:center;gap:.5rem;background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:.42rem .8rem;">
+      <span style="font-size:.75rem;font-weight:600;color:var(--text2);">Overdue after</span>
+      <input type="number" id="overdue-hours" value="24" min="1" max="72" style="width:55px;border:none;outline:none;font-size:.82rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--primary);" onchange="saveOverdueHours();renderOverdue();updateDashboard()">
+      <span style="font-size:.75rem;font-weight:600;color:var(--text2);">hrs</span>
+    </div>
+  </div>
+  </div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <h3>🔴 Overdue List</h3>
+      <div class="search-box"><span>🔍</span><input id="overdue-search" type="text" placeholder="Search..." oninput="renderOverdue()"></div>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Shift</th><th>Issue Date</th><th>Hours Overdue</th><th>Actions</th></tr></thead>
+        <tbody id="overdue-tbody"><tr class="empty-row"><td colspan="11">🎉 No overdue tools!</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="page" id="page-charts">
+  <div class="pg-hdr"><div><div class="pg-title">📈 Charts & Analytics</div></div></div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="sc-icon" style="background:#e8f0fb">📤</div><div><div class="sc-num" id="ch-total" style="color:var(--primary)">0</div><div class="sc-label">Total Issues</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#ecfdf5">✅</div><div><div class="sc-num" id="ch-returned" style="color:var(--success)">0</div><div class="sc-label">Returned</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#fef2f2">⚠️</div><div><div class="sc-num" id="ch-overdue" style="color:var(--danger)">0</div><div class="sc-label">Overdue</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#fff7ed">🔧</div><div><div class="sc-num" id="ch-damaged" style="color:var(--warning)">0</div><div class="sc-label">Damaged</div></div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card"><h4>📊 Issue Status Overview</h4><div class="chart-wrap"><canvas id="chart-status"></canvas></div></div>
+    <div class="chart-card"><h4>🔧 Top 5 Most Issued Tools</h4><div class="chart-wrap"><canvas id="chart-tools"></canvas></div></div>
+    <div class="chart-card"><h4>👷 Top 5 Employees by Issues</h4><div class="chart-wrap"><canvas id="chart-emp"></canvas></div></div>
+    <div class="chart-card"><h4>🛠️ Tool Condition on Return</h4><div class="chart-wrap"><canvas id="chart-condition"></canvas></div></div>
+    <div class="chart-card"><h4>🕐 Issues by Shift</h4><div class="chart-wrap"><canvas id="chart-shift"></canvas></div></div>
+  </div>
+</div>
+
+<!-- TOOL SUMMARY -->
+<div class="page" id="page-toolsummary">
+  <div class="pg-hdr"><div><div class="pg-title">🔩 Tool Summary</div><div class="pg-sub">Tool-wise usage analytics</div></div></div>
+  <div class="filter-row">
+    <div class="search-box"><span>🔍</span><input id="ts-search" type="text" placeholder="Search tool..." oninput="renderToolSummary()" style="width:200px"></div>
+  </div>
+  <div class="summary-grid" id="tool-summary-grid">
+    <div style="color:var(--text2);font-size:.83rem;padding:2rem;grid-column:1/-1;text-align:center">No records yet.</div>
+  </div>
+</div>
+
+<!-- SHIFT REPORT -->
+<div class="page" id="page-shift">
+  <div class="pg-hdr"><div><div class="pg-title">🕐 Shift Report</div><div class="pg-sub">View records by shift & date</div></div>
+  <div class="btn-row">
+    <button class="btn btn-warning" onclick="downloadShiftExcel()">⬇️ Download Shift Excel</button>
+  </div>
+  </div>
+  <div class="form-card" style="padding:1rem 1.5rem">
+    <div class="filter-row" style="margin-bottom:0">
+      <select id="shift-filter" onchange="renderShiftReport()">
+        <option value="all">All Shifts</option>
+        <option value="Morning">🌅 Morning</option>
+        <option value="Evening">🌆 Evening</option>
+        <option value="Night">🌙 Night</option>
+      </select>
+      <input type="date" id="shift-date-from" onchange="renderShiftReport()" title="From">
+      <input type="date" id="shift-date-to" onchange="renderShiftReport()" title="To">
+      <button class="btn btn-outline" style="padding:.38rem .75rem;font-size:.75rem" onclick="clearShiftFilters()">✕ Clear</button>
+    </div>
+  </div>
+  <div class="stats-row" id="shift-stats-row" style="margin-bottom:1rem"></div>
+  <div class="table-card">
+    <div class="table-toolbar"><h3 id="shift-report-title">📋 Shift Records</h3></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Shift</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Issue Date & Time</th><th>Return Date & Time</th><th>Status</th><th>Condition</th></tr></thead>
+        <tbody id="shift-tbody"><tr class="empty-row"><td colspan="13">Select shift to view records.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE HISTORY -->
+<div class="page" id="page-employee">
+  <div class="pg-hdr"><div><div class="pg-title">👷 Employee History</div></div></div>
+  <div class="form-card" style="padding:1rem 1.5rem">
+    <div class="filter-row">
+      <div class="field" style="flex:1;max-width:300px">
+        <label>Search Employee</label>
+        <input id="emp-search" type="text" placeholder="Enter name or ID..." oninput="renderEmpHistory()">
+      </div>
+    </div>
+  </div>
+  <div class="table-card">
+    <div class="table-toolbar"><h3>📋 Employee Tool History</h3></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date & Time</th><th>Return Date & Time</th><th>Status</th><th>Condition</th><th>Remarks</th></tr></thead>
+        <tbody id="emp-tbody"><tr class="empty-row"><td colspan="14">Search an employee to see history.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIT LOG -->
+<div class="page" id="page-audit">
+  <div class="pg-hdr">
+    <div><div class="pg-title">📜 Audit Log</div><div class="pg-sub">All actions tracked here</div></div>
+    <div class="btn-row">
+      <button class="btn btn-teal" onclick="downloadAuditExcel()">⬇️ Download Log</button>
+      <button class="btn btn-danger" onclick="clearAuditLog()">🗑️ Download & Clear</button>
+    </div>
+  </div>
+  <div class="form-card" style="padding:1rem 1.5rem;margin-bottom:1rem">
+    <div class="filter-row" style="margin-bottom:0">
+      <select id="audit-filter" onchange="renderAuditLog()">
+        <option value="all">All Actions</option>
+        <option value="issue">📤 Issue</option>
+        <option value="return">📥 Return</option>
+        <option value="edit">✏️ Edit</option>
+        <option value="delete">🗑️ Delete</option>
+        <option value="login">🔓 Login</option>
+        <option value="lock">🔒 Logout</option>
+        <option value="backup">💾 Backup</option>
+        <option value="restore">📂 Restore</option>
+      </select>
+    </div>
+  </div>
+  <div id="audit-log-container" style="max-height:600px;overflow-y:auto;">
+    <div style="text-align:center;padding:2rem;color:var(--text2);font-size:.83rem">No audit logs yet.</div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="pg-hdr">
+    <div><div class="pg-title">⚙️ Settings & Upload</div><div class="pg-sub">Manage employees, tools, PIN & backup</div></div>
+    <button class="btn btn-info" onclick="downloadTemplates()">📄 Download Templates</button>
+  </div>
+  <div class="settings-grid">
+
+    <!-- USER MANAGEMENT -->
+    <div class="settings-card">
+      <h3>👥 User Management <span class="count-pill" id="users-count">0</span></h3>
+      <p>Add users with individual PINs. Each login is tracked in Audit Log.<br><span style="font-size:.7rem;color:var(--danger);font-weight:600">⭐ Mark one user as Admin to manage audit log.</span></p>
+      <div class="user-mgmt-list" id="user-mgmt-list"></div>
+      <div class="add-user-form">
+        <input id="new-username" type="text" placeholder="Name (e.g. Ravi)" maxlength="20">
+        <input id="new-userpin" type="password" placeholder="4-digit PIN" maxlength="4">
+        <label style="display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;cursor:pointer;grid-column:1/-1">
+          <input type="checkbox" id="new-useradmin"> ⭐ Mark as Admin (can clear audit log)
+        </label>
+        <button class="btn btn-primary" onclick="addUserManual()" style="padding:.5rem .9rem;font-size:.8rem;grid-column:1/-1">➕ Add User</button>
+      </div>
+      <div style="margin-top:.75rem">
+        <button class="btn btn-outline" onclick="logoutUser()" style="padding:.42rem .8rem;font-size:.75rem;width:100%">🔒 Logout Current User</button>
+      </div>
+    </div>
+
+    <!-- BACKUP / RESTORE -->
+    <div class="settings-card">
+      <h3>💾 Backup & Restore</h3>
+      <p>Save all data as JSON file. Load it on any device to restore.</p>
+      <div class="btn-row" style="margin-bottom:.8rem">
+        <button class="btn btn-teal" onclick="backupData()">💾 Save Backup (.json)</button>
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('restore-upload').click()">
+        <input type="file" id="restore-upload" accept=".json" onchange="restoreData(this)">
+        <div class="uz-icon">📂</div>
+        <p>Click to Load Backup JSON</p>
+        <p class="uz-hint">This will replace all current data</p>
+      </div>
+    </div>
+
+    <!-- EMPLOYEE MASTER -->
+    <div class="settings-card">
+      <h3>👷 Employee Master <span class="count-pill" id="emp-count">0</span></h3>
+      <p>Upload Excel with columns: <b>Employee Name, Employee ID</b></p>
+      <div class="upload-zone" onclick="document.getElementById('emp-upload').click()">
+        <input type="file" id="emp-upload" accept=".xlsx,.xls,.csv" onchange="uploadEmployees(this)">
+        <div class="uz-icon">📁</div>
+        <p>Click to upload Employee Excel / CSV</p>
+        <p class="uz-hint">Columns: Employee Name | Employee ID</p>
+      </div>
+      <div class="add-manual">
+        <input id="new-empname" type="text" placeholder="Employee Name">
+        <input id="new-empid" type="text" placeholder="Employee ID">
+        <button class="btn btn-primary" onclick="addEmployeeManual()" style="padding:.5rem .9rem">➕ Add</button>
+      </div>
+      <div class="master-list" id="emp-master-list"></div>
+    </div>
+
+    <!-- TOOL MASTER -->
+    <div class="settings-card">
+      <h3>🔧 Tool Master <span class="count-pill" id="tool-count">0</span></h3>
+      <p>Upload Excel with columns: <b>Tool Name, Tool Code</b></p>
+      <div class="upload-zone" onclick="document.getElementById('tool-upload').click()">
+        <input type="file" id="tool-upload" accept=".xlsx,.xls,.csv" onchange="uploadTools(this)">
+        <div class="uz-icon">📁</div>
+        <p>Click to upload Tool Excel / CSV</p>
+        <p class="uz-hint">Columns: Tool Name | Tool Code</p>
+      </div>
+      <div class="add-manual">
+        <input id="new-toolname" type="text" placeholder="Tool Name">
+        <input id="new-toolcode" type="text" placeholder="Tool Code">
+        <button class="btn btn-primary" onclick="addToolManual()" style="padding:.5rem .9rem">➕ Add</button>
+      </div>
+      <div class="master-list" id="tool-master-list"></div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- RETURN MODAL -->
+<div class="modal-overlay" id="return-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeReturnModal()">✕</button>
+    <h3>📥 Mark Tool as Returned</h3>
+    <input type="hidden" id="rm-idx">
+    <div class="form-grid" style="grid-template-columns:1fr 1fr">
+      <div class="field"><label>Employee</label><input id="rm-emp" type="text" readonly></div>
+      <div class="field"><label>Tool Name</label><input id="rm-tool" type="text" readonly></div>
+      <div class="field"><label>Tool Code</label><input id="rm-toolcode" type="text" readonly></div>
+      <div class="field"><label>Book No / Page No</label><input id="rm-bookpage" type="text" readonly></div>
+      <div class="field"><label>Return Date <span class="auto-badge">AUTO</span></label><input id="rm-date" type="text" readonly></div>
+      <div class="field"><label>Return Time <span class="auto-badge">AUTO</span></label><input id="rm-time" type="text" readonly></div>
+      <div class="field" style="grid-column:1/-1">
+        <label>Tool Condition *</label>
+        <select id="rm-condition">
+          <option value="">-- Select Condition --</option>
+          <option value="Good">✅ Good</option>
+          <option value="Damaged">❌ Damaged</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/-1">
+        <label>Return Remarks</label>
+        <textarea id="rm-remarks" placeholder="Any notes on return..."></textarea>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn btn-success" onclick="confirmReturn()">✅ Confirm Return</button>
+      <button class="btn btn-outline" onclick="closeReturnModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeEditModal()">✕</button>
+    <h3>✏️ Edit Record</h3>
+    <input type="hidden" id="em-idx">
+    <div class="form-grid">
+      <div class="field"><label>Employee Name</label><input id="em-empname" type="text"></div>
+      <div class="field"><label>Employee ID</label><input id="em-empid" type="text"></div>
+      <div class="field"><label>Tool Name</label><input id="em-toolname" type="text"></div>
+      <div class="field"><label>Tool Code</label><input id="em-toolcode" type="text"></div>
+      <div class="field"><label>Book No</label><input id="em-bookno" type="text"></div>
+      <div class="field"><label>Page No</label><input id="em-pageno" type="text"></div>
+      <div class="field"><label>Quantity</label><input id="em-qty" type="number" min="1"></div>
+      <div class="field">
+        <label>Shift</label>
+        <select id="em-shift">
+          <option value="Morning">Morning</option>
+          <option value="Evening">Evening</option>
+          <option value="Night">Night</option>
+        </select>
+      </div>
+      <div class="field" style="grid-column:1/-1"><label>Remarks</label><textarea id="em-remarks"></textarea></div>
+    </div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn btn-primary" onclick="confirmEdit()">💾 Save Changes</button>
+      <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ISSUE SLIP MODAL -->
+<div class="modal-overlay slip-modal" id="slip-modal">
+  <div class="modal" style="max-width:400px">
+    <button class="modal-close" onclick="closeSlipModal()">✕</button>
+    <h3>🖨️ Issue Slip</h3>
+    <div class="slip-content" id="slip-content"></div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn btn-primary" onclick="printSlip()">🖨️ Print Slip</button>
+      <button class="btn btn-outline" onclick="closeSlipModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:380px">
+    <h3 id="confirm-title">Confirm Action</h3>
+    <p id="confirm-msg" style="font-size:.85rem;color:var(--text2);margin-bottom:1.5rem;"></p>
+    <div class="btn-row">
+      <button class="btn btn-danger" id="confirm-ok">Yes, Proceed</button>
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== STATE =====
+let records    = JSON.parse(localStorage.getItem('tc_records')    || '[]');
+let empMaster  = JSON.parse(localStorage.getItem('tc_employees')  || '[]');
+let toolMaster = JSON.parse(localStorage.getItem('tc_tools')      || '[]');
+let auditLog   = JSON.parse(localStorage.getItem('tc_audit')      || '[]');
+let appUsers   = JSON.parse(localStorage.getItem('tc_users')      || '[]');
+let overdueHrs = parseInt(localStorage.getItem('tc_overdue_hrs')  || '24');
+let chartInstances = {};
+let confirmCallback = null;
+
+// Multi-user login state
+let currentUser = null;   // { name, avatar, loginTime }
+let pinBuffer = '';
+let pinTargetUser = null; // user being PIN-checked
+
+function saveData()      { localStorage.setItem('tc_records', JSON.stringify(records)); }
+function saveEmpMaster() { localStorage.setItem('tc_employees', JSON.stringify(empMaster)); }
+function saveToolMaster(){ localStorage.setItem('tc_tools', JSON.stringify(toolMaster)); }
+function saveAudit()     { localStorage.setItem('tc_audit', JSON.stringify(auditLog.slice(-500))); }
+function saveUsers()     { localStorage.setItem('tc_users', JSON.stringify(appUsers)); }
+function saveOverdueHours(){ overdueHrs=parseInt(document.getElementById('overdue-hours').value)||24; localStorage.setItem('tc_overdue_hrs',overdueHrs); }
+
+// ===== AUDIT =====
+function addAudit(type, msg){
+  const user = currentUser ? currentUser.name : 'System';
+  auditLog.unshift({ type, msg, user, time: new Date().toLocaleString('en-IN') });
+  saveAudit();
+}
+
+// ===== HELPERS =====
+function nowDateStr(){ return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function nowTimeStr(){ return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}); }
+function todayISO()  { return new Date().toISOString().split('T')[0]; }
+function isOverdue(r){
+  if(r.status!=='Issued') return false;
+  try{ const iso=r.issueDateISO||todayISO(); return (new Date()-new Date(iso)) > (overdueHrs*3600000); }catch(e){return false;}
+}
+function hoursDiff(r){
+  try{ const iso=r.issueDateISO||todayISO(); const diff=(new Date()-new Date(iso))/3600000; return Math.max(0,diff.toFixed(1)); }catch(e){return 0;}
+}
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=(type==='success'?'✅ ':'❌ ')+msg;
+  t.className='toast show '+type;
+  setTimeout(()=>t.className='toast',3200);
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+
+// ===== CONFIRM DIALOG =====
+function showConfirm(title, msg, cb){
+  document.getElementById('confirm-title').textContent=title;
+  document.getElementById('confirm-msg').textContent=msg;
+  confirmCallback=cb;
+  document.getElementById('confirm-modal').classList.add('show');
+}
+function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('show'); confirmCallback=null; }
+document.getElementById('confirm-ok').onclick=()=>{ if(confirmCallback)confirmCallback(); closeConfirm(); };
+
+// ===== MULTI-USER LOGIN =====
+const AVATARS = ['👷','🧑‍🔧','👨‍💼','👩‍💼','🧑‍💻','👨‍🔬','👩‍🔧','🧑‍🏭'];
+
+function renderUserGrid(){
+  const grid = document.getElementById('user-grid-list');
+  if(!appUsers.length){
+    grid.innerHTML=`<div class="no-users-msg">No users yet.<br>Add users in Settings.</div>`;
+    return;
+  }
+  grid.innerHTML = appUsers.map((u,i)=>{
+    const last = u.lastLogin ? u.lastLogin : 'Never';
+    return `<div class="user-card" onclick="selectUser(${i})">
+      <div class="uc-avatar">${u.avatar||AVATARS[i%AVATARS.length]}</div>
+      <div class="uc-name">${u.name}</div>
+      <div class="uc-last">${last}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectUser(idx){
+  pinTargetUser = {...appUsers[idx], idx};
+  pinBuffer = '';
+  updatePinDots();
+  document.getElementById('peu-avatar').textContent = pinTargetUser.avatar || AVATARS[idx % AVATARS.length];
+  document.getElementById('peu-name').textContent = pinTargetUser.name;
+  document.getElementById('pin-error').textContent = '';
+  document.getElementById('login-step1').style.display='none';
+  document.getElementById('login-step2').style.display='block';
+}
+
+function goLoginStep1(){
+  pinTargetUser = null; pinBuffer = '';
+  document.getElementById('login-step1').style.display='block';
+  document.getElementById('login-step2').style.display='none';
+  document.getElementById('pin-error').textContent='';
+}
+
+function pinPress(n){
+  if(!n) return;
+  if(pinBuffer.length>=4) return;
+  pinBuffer+=n;
+  updatePinDots();
+  if(pinBuffer.length===4) setTimeout(checkPin,200);
+}
+function pinBackspace(){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); }
+function updatePinDots(){
+  for(let i=0;i<4;i++) document.getElementById('pd'+i).className='pin-dot'+(i<pinBuffer.length?' filled':'');
+}
+
+function checkPin(){
+  if(!pinTargetUser){ pinBuffer=''; return; }
+  if(pinBuffer === pinTargetUser.pin){
+    // Login success
+    const now = new Date().toLocaleString('en-IN');
+    appUsers[pinTargetUser.idx].lastLogin = nowTimeStr()+' '+nowDateStr();
+    saveUsers();
+    currentUser = { name: pinTargetUser.name, avatar: pinTargetUser.avatar||AVATARS[pinTargetUser.idx%AVATARS.length], loginTime: now };
+    document.getElementById('login-screen').classList.add('hide');
+    updateLoggedBar();
+    addAudit('login', `${currentUser.name} logged in`);
+    updateDashboard(); renderRecent(); renderSettings();
+    showToast(`Welcome, ${currentUser.name}! 👋`);
+    goLoginStep1();
+  } else {
+    document.getElementById('pin-error').textContent='❌ Wrong PIN. Try again.';
+    pinBuffer=''; updatePinDots();
+  }
+}
+
+function updateLoggedBar(){
+  if(!currentUser) return;
+  document.getElementById('lb-avatar').textContent = currentUser.avatar;
+  document.getElementById('lb-name').textContent = currentUser.name;
+  document.getElementById('lb-time').textContent = 'Since '+nowTimeStr();
+}
+
+function logoutUser(){
+  if(currentUser) addAudit('lock', `${currentUser.name} logged out`);
+  currentUser = null; pinBuffer = '';
+  document.getElementById('login-screen').classList.remove('hide');
+  goLoginStep1();
+  renderUserGrid();
+}
+
+// Init users — if no users, create a default one
+function initUsers(){
+  if(!appUsers.length){
+    appUsers = [{ name:'Admin', pin:'1234', avatar:'👷', isAdmin:true }];
+    saveUsers();
+  }
+  renderUserGrid();
+}
+
+// ===== NAV =====
+function goPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='charts') setTimeout(renderCharts,100);
+  if(id==='toolsummary') renderToolSummary();
+  if(id==='shift') renderShiftReport();
+  if(id==='audit') renderAuditLog();
+  if(id==='overdue'){ document.getElementById('overdue-hours').value=overdueHrs; renderOverdue(); }
+  if(id==='master') renderMaster();
+  if(id==='issue'){ startClock(); renderIssued(); }
+  if(id==='return') renderPendingReturn();
+  if(id==='employee') {}
+  if(id==='settings') renderSettings();
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ===== CLOCK =====
+function startClock(){
+  function tick(){
+    const d=new Date();
+    const ds=d.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+    const ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    const ddEl=document.getElementById('dash-date'); if(ddEl) ddEl.textContent=ds+' | '+ts;
+    const idEl=document.getElementById('i-date'); if(idEl) idEl.value=d.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'});
+    const itEl=document.getElementById('i-time'); if(itEl) itEl.value=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+  }
+  tick(); setInterval(tick,1000);
+}
+
+// ===== AUTOCOMPLETE =====
+function hideAC(id){ const el=document.getElementById(id); if(el)el.classList.remove('show'); }
+function highlight(text,q){
+  const i=text.toLowerCase().indexOf(q);
+  if(i<0)return text;
+  return text.slice(0,i)+'<mark>'+text.slice(i,i+q.length)+'</mark>'+text.slice(i+q.length);
+}
+function showEmpSuggestions(input,ddId){
+  const q=input.value.toLowerCase();
+  const dd=document.getElementById(ddId);
+  if(!q){dd.classList.remove('show');return;}
+  const matches=empMaster.filter(e=>e.name.toLowerCase().includes(q)||e.id.toLowerCase().includes(q)).slice(0,8);
+  if(!matches.length){dd.classList.remove('show');return;}
+  dd.innerHTML=matches.map(e=>`<div class="ac-item" onmousedown="selectEmp('${e.name.replace(/'/g,"\\'")}','${e.id.replace(/'/g,"\\'")}')"><span>${highlight(e.name,q)}</span><span class="ac-code">${e.id}</span></div>`).join('');
+  dd.classList.add('show');
+}
+function selectEmp(name,id){
+  document.getElementById('i-empname').value=name;
+  document.getElementById('i-empid').value=id;
+  hideAC('ac-empname');
+}
+function showToolSuggestions(input,ddId){
+  const q=input.value.toLowerCase();
+  const dd=document.getElementById(ddId);
+  if(!q){dd.classList.remove('show');return;}
+  const matches=toolMaster.filter(t=>t.name.toLowerCase().includes(q)||(t.code||'').toLowerCase().includes(q)).slice(0,8);
+  if(!matches.length){dd.classList.remove('show');return;}
+  dd.innerHTML=matches.map(t=>`<div class="ac-item" onmousedown="selectTool('${t.name.replace(/'/g,"\\'")}','${(t.code||'').replace(/'/g,"\\'")}')"><span>${highlight(t.name,q)}</span>${t.code?`<span class="ac-code">${t.code}</span>`:''}</div>`).join('');
+  dd.classList.add('show');
+}
+function selectTool(name,code){
+  document.getElementById('i-toolname').value=name;
+  document.getElementById('i-toolcode').value=code;
+  hideAC('ac-toolname');
+}
+function acKeyNav(e,ddId,type){
+  const dd=document.getElementById(ddId);
+  const items=dd.querySelectorAll('.ac-item');
+  let cur=Array.from(items).findIndex(i=>i.classList.contains('ac-active'));
+  if(e.key==='ArrowDown'){e.preventDefault();cur=Math.min(cur+1,items.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();cur=Math.max(cur-1,0);}
+  else if(e.key==='Enter'&&cur>=0){e.preventDefault();items[cur].dispatchEvent(new MouseEvent('mousedown'));return;}
+  else if(e.key==='Escape'){hideAC(ddId);return;}
+  items.forEach((i,idx)=>i.classList.toggle('ac-active',idx===cur));
+}
+
+// ===== DASHBOARD =====
+function updateDashboard(){
+  const today=todayISO();
+  const issuedToday=records.filter(r=>r.issueDateISO===today).length;
+  const returnedToday=records.filter(r=>r.returnDateISO===today).length;
+  const overdue=records.filter(r=>isOverdue(r)).length;
+  const active=records.filter(r=>r.status==='Issued').length;
+  document.getElementById('stat-today').textContent=issuedToday;
+  document.getElementById('stat-returned').textContent=returnedToday;
+  document.getElementById('stat-overdue').textContent=overdue;
+  document.getElementById('stat-active').textContent=active;
+  document.getElementById('stat-total').textContent=records.length;
+  // Overdue banner
+  const banner=document.getElementById('overdue-banner');
+  if(overdue>0){
+    banner.style.display='flex';
+    document.getElementById('overdue-banner-text').textContent=`⚠️ ${overdue} tool(s) are overdue and have not been returned!`;
+  } else {
+    banner.style.display='none';
+  }
+}
+
+function renderRecent(){
+  const tbody=document.getElementById('recent-tbody');
+  const recent=[...records].reverse().slice(0,10);
+  if(!recent.length){tbody.innerHTML='<tr class="empty-row"><td colspan="10">No records yet!</td></tr>';return;}
+  tbody.innerHTML=recent.map((r,i)=>`
+    <tr>
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td><b>${r.empName}</b><br><span style="font-size:.69rem;color:var(--text2)">${r.empId}</span></td>
+      <td>${r.toolName}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate} ${r.issueTime}</td>
+      <td>${statusBadge(r)}</td>
+    </tr>`).join('');
+}
+
+function statusBadge(r){
+  if(r.status==='Returned') return '<span class="badge badge-returned">✅ Returned</span>';
+  if(isOverdue(r)) return '<span class="badge badge-overdue">🔴 Overdue</span>';
+  return '<span class="badge badge-issued">📤 Issued</span>';
+}
+function condBadge(c){
+  if(!c)return'—';
+  return c==='Good'?'<span class="badge badge-good">✅ Good</span>':'<span class="badge badge-damaged">❌ Damaged</span>';
+}
+function shiftBadge(s){
+  if(!s)return'—';
+  if(s==='Morning') return '<span class="badge badge-morning">🌅 Morning</span>';
+  if(s==='Evening') return '<span class="badge badge-evening">🌆 Evening</span>';
+  if(s==='Night') return '<span class="badge badge-night">🌙 Night</span>';
+  return s;
+}
+
+// ===== ISSUE =====
+function issueToolSave(){
+  const empName=document.getElementById('i-empname').value.trim();
+  const empId=document.getElementById('i-empid').value.trim();
+  const toolName=document.getElementById('i-toolname').value.trim();
+  const toolCode=document.getElementById('i-toolcode').value.trim();
+  const bookNo=document.getElementById('i-bookno').value.trim();
+  const pageNo=document.getElementById('i-pageno').value.trim();
+  const qty=document.getElementById('i-qty').value||'1';
+  const shift=document.getElementById('i-shift').value;
+  const remarks=document.getElementById('i-remarks').value.trim();
+  const issueDate=document.getElementById('i-date').value;
+  const issueTime=document.getElementById('i-time').value;
+  if(!empName||!empId||!toolName||!bookNo||!pageNo){showToast('Please fill all required fields!','error');return;}
+  const rec={ empName,empId,toolName,toolCode,bookNo,pageNo,qty,shift,remarks,
+    issueDate,issueTime,issueDateISO:todayISO(),
+    status:'Issued',returnDate:'',returnTime:'',returnDateISO:'',condition:'',returnRemarks:'' };
+  records.push(rec);
+  saveData(); clearIssueForm(); renderIssued(); updateDashboard(); renderRecent();
+  addAudit('issue',`"${toolName}" issued to ${empName} (${empId}) — ${shift} shift`);
+  showToast(`"${toolName}" issued to ${empName}!`);
+  // Auto open slip
+  openSlipModal(records.length-1);
+}
+
+function clearIssueForm(){
+  ['i-empname','i-empid','i-toolname','i-toolcode','i-bookno','i-pageno','i-remarks'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('i-qty').value='1';
+  hideAC('ac-empname'); hideAC('ac-toolname');
+}
+
+function renderIssued(){
+  const q=(document.getElementById('issue-search')?.value||'').toLowerCase();
+  const tbody=document.getElementById('issued-tbody');
+  const issued=records.map((r,i)=>({...r,idx:i})).filter(r=>r.status==='Issued');
+  const f=q?issued.filter(r=>r.empName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q)||r.toolName.toLowerCase().includes(q)||(r.toolCode||'').toLowerCase().includes(q)):issued;
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="13">No currently issued tools.</td></tr>';return;}
+  tbody.innerHTML=f.map((r,i)=>`
+    <tr ${isOverdue(r)?'style="background:#fff5f5"':''}>
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td><b>${r.empName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td>${r.toolName}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueTime}</td>
+      <td>${statusBadge(r)}</td>
+      <td><div class="action-btns">
+        <button class="btn-sm btn-sm-return" onclick="openReturnModal(${r.idx})">📥</button>
+        <button class="btn-sm btn-sm-print" onclick="openSlipModal(${r.idx})">🖨️</button>
+        <button class="btn-sm btn-sm-edit" onclick="openEditModal(${r.idx})">✏️</button>
+        <button class="btn-sm btn-sm-del" onclick="confirmDelete(${r.idx})">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+// ===== RETURN =====
+function renderPendingReturn(){
+  const q=(document.getElementById('return-search')?.value||'').toLowerCase();
+  const tbody=document.getElementById('return-tbody');
+  const pending=records.map((r,i)=>({...r,idx:i})).filter(r=>r.status==='Issued');
+  const f=q?pending.filter(r=>r.empName.toLowerCase().includes(q)||r.toolName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q)):pending;
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="12">No tools pending return. 🎉</td></tr>';return;}
+  tbody.innerHTML=f.map((r,i)=>`
+    <tr ${isOverdue(r)?'style="background:#fff5f5"':''}>
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td><b>${r.empName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td>${r.toolName}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate} ${r.issueTime}</td>
+      <td>${statusBadge(r)}</td>
+      <td><button class="btn-sm btn-sm-return" onclick="openReturnModal(${r.idx})">📥 Mark Returned</button></td>
+    </tr>`).join('');
+}
+
+function openReturnModal(idx){
+  const r=records[idx];
+  document.getElementById('rm-idx').value=idx;
+  document.getElementById('rm-emp').value=r.empName+' ('+r.empId+')';
+  document.getElementById('rm-tool').value=r.toolName;
+  document.getElementById('rm-toolcode').value=r.toolCode||'—';
+  document.getElementById('rm-bookpage').value=(r.bookNo||'—')+' / Page '+(r.pageNo||'—');
+  document.getElementById('rm-date').value=nowDateStr();
+  document.getElementById('rm-time').value=nowTimeStr();
+  document.getElementById('rm-condition').value='';
+  document.getElementById('rm-remarks').value='';
+  document.getElementById('return-modal').classList.add('show');
+}
+function closeReturnModal(){ document.getElementById('return-modal').classList.remove('show'); }
+
+function confirmReturn(){
+  const idx=parseInt(document.getElementById('rm-idx').value);
+  const cond=document.getElementById('rm-condition').value;
+  if(!cond){showToast('Please select tool condition!','error');return;}
+  records[idx].status='Returned';
+  records[idx].returnDate=nowDateStr();
+  records[idx].returnTime=nowTimeStr();
+  records[idx].returnDateISO=todayISO();
+  records[idx].condition=cond;
+  records[idx].returnRemarks=document.getElementById('rm-remarks').value.trim();
+  saveData(); closeReturnModal(); renderPendingReturn(); updateDashboard(); renderRecent();
+  addAudit('return',`"${records[idx].toolName}" returned by ${records[idx].empName} — Condition: ${cond}`);
+  showToast(`Tool returned! Condition: ${cond}`);
+}
+
+// ===== MASTER DATA =====
+function clearMasterFilters(){
+  document.getElementById('master-filter-status').value='all';
+  document.getElementById('master-filter-condition').value='all';
+  document.getElementById('master-filter-shift').value='all';
+  document.getElementById('master-filter-from').value='';
+  document.getElementById('master-filter-to').value='';
+  document.getElementById('master-search').value='';
+  renderMaster();
+}
+
+function renderMaster(){
+  const q=(document.getElementById('master-search')?.value||'').toLowerCase();
+  const fs=document.getElementById('master-filter-status')?.value||'all';
+  const fc=document.getElementById('master-filter-condition')?.value||'all';
+  const fsh=document.getElementById('master-filter-shift')?.value||'all';
+  const ffrom=document.getElementById('master-filter-from')?.value||'';
+  const fto=document.getElementById('master-filter-to')?.value||'';
+  const tbody=document.getElementById('master-tbody');
+  let f=records.map((r,i)=>({...r,idx:i}));
+  if(q) f=f.filter(r=>r.empName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q)||r.toolName.toLowerCase().includes(q)||(r.toolCode||'').toLowerCase().includes(q));
+  if(fs!=='all'){ if(fs==='Overdue')f=f.filter(r=>isOverdue(r)); else f=f.filter(r=>r.status===fs&&!isOverdue(r)); }
+  if(fc!=='all') f=f.filter(r=>r.condition===fc);
+  if(fsh!=='all') f=f.filter(r=>r.shift===fsh);
+  if(ffrom) f=f.filter(r=>r.issueDateISO>=ffrom);
+  if(fto) f=f.filter(r=>r.issueDateISO<=fto);
+  document.getElementById('master-count').textContent=`(${f.length} records)`;
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="17">No records found.</td></tr>';return;}
+  tbody.innerHTML=f.map((r,i)=>`
+    <tr ${isOverdue(r)?'style="background:#fff5f5"':''}>
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td><b>${r.empName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td>${r.toolName}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueTime||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.returnDate||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.returnTime||'—'}</td>
+      <td>${statusBadge(r)}</td>
+      <td>${condBadge(r.condition)}</td>
+      <td style="font-size:.76rem;max-width:120px;word-break:break-word">${r.remarks||r.returnRemarks||'—'}</td>
+      <td><div class="action-btns">
+        ${r.status==='Issued'?`<button class="btn-sm btn-sm-return" onclick="openReturnModal(${r.idx})">📥</button>`:''}
+        <button class="btn-sm btn-sm-print" onclick="openSlipModal(${r.idx})">🖨️</button>
+        <button class="btn-sm btn-sm-edit" onclick="openEditModal(${r.idx})">✏️</button>
+        <button class="btn-sm btn-sm-del" onclick="confirmDelete(${r.idx})">🗑️</button>
+      </div></td>
+    </tr>`).join('');
+}
+
+// ===== OVERDUE =====
+function renderOverdue(){
+  const q=(document.getElementById('overdue-search')?.value||'').toLowerCase();
+  const tbody=document.getElementById('overdue-tbody');
+  let ov=records.map((r,i)=>({...r,idx:i})).filter(r=>isOverdue(r));
+  if(q) ov=ov.filter(r=>r.empName.toLowerCase().includes(q)||r.toolName.toLowerCase().includes(q));
+  if(!ov.length){tbody.innerHTML='<tr class="empty-row"><td colspan="11">🎉 No overdue tools!</td></tr>';return;}
+  tbody.innerHTML=ov.map((r,i)=>`
+    <tr style="background:#fff5f5">
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td><b>${r.empName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td><b style="color:var(--danger)">${r.toolName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate}</td>
+      <td><span class="badge badge-overdue overdue-blink">${hoursDiff(r)} hrs</span></td>
+      <td><button class="btn-sm btn-sm-return" onclick="openReturnModal(${r.idx})">📥 Return</button></td>
+    </tr>`).join('');
+}
+
+// ===== CHARTS =====
+function renderCharts(){
+  const total=records.length,returned=records.filter(r=>r.status==='Returned').length;
+  const overdue=records.filter(r=>isOverdue(r)).length,issued=records.filter(r=>r.status==='Issued'&&!isOverdue(r)).length;
+  const damaged=records.filter(r=>r.condition==='Damaged').length;
+  ['ch-total','ch-returned','ch-overdue','ch-damaged'].forEach((id,i)=>document.getElementById(id).textContent=[total,returned,overdue,damaged][i]);
+  makeChart('chart-status','doughnut',['Issued','Returned','Overdue'],[issued,returned,overdue],['#f59e0b','#10b981','#ef4444']);
+  const tc={};records.forEach(r=>{tc[r.toolName]=(tc[r.toolName]||0)+1;});
+  const tt=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  makeChart('chart-tools','bar',tt.map(t=>t[0]),tt.map(t=>t[1]),['#0f4c81']);
+  const ec={};records.forEach(r=>{ec[r.empName]=(ec[r.empName]||0)+1;});
+  const te=Object.entries(ec).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  makeChart('chart-emp','bar',te.map(e=>e[0]),te.map(e=>e[1]),['#6366f1']);
+  const good=records.filter(r=>r.condition==='Good').length;
+  makeChart('chart-condition','doughnut',['Good','Damaged','Pending'],[good,damaged,total-good-damaged],['#10b981','#ef4444','#94a3b8']);
+  const sm={Morning:0,Evening:0,Night:0};
+  records.forEach(r=>{if(r.shift&&sm[r.shift]!==undefined)sm[r.shift]++;});
+  makeChart('chart-shift','bar',Object.keys(sm),Object.values(sm),['#f59e0b','#6366f1','#1e293b']);
+}
+function makeChart(id,type,labels,data,colors){
+  const ctx=document.getElementById(id)?.getContext('2d');
+  if(!ctx)return;
+  if(chartInstances[id]) chartInstances[id].destroy();
+  chartInstances[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:colors.length===1?data.map((_,i)=>`rgba(15,76,129,${0.35+i*0.13})`):colors,borderRadius:type==='bar'?6:0,borderWidth:type==='doughnut'?2:0,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'Plus Jakarta Sans',size:11},padding:10}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'JetBrains Mono',size:10}},grid:{color:'#f1f5f9'}},x:{ticks:{font:{family:'Plus Jakarta Sans',size:10}}}}:{}}});
+}
+
+// ===== TOOL SUMMARY =====
+function renderToolSummary(){
+  const q=(document.getElementById('ts-search')?.value||'').toLowerCase();
+  const grid=document.getElementById('tool-summary-grid');
+  const tc={};
+  records.forEach(r=>{
+    if(!tc[r.toolName]) tc[r.toolName]={total:0,returned:0,overdue:0,damaged:0,employees:new Set()};
+    tc[r.toolName].total++;
+    if(r.status==='Returned') tc[r.toolName].returned++;
+    if(isOverdue(r)) tc[r.toolName].overdue++;
+    if(r.condition==='Damaged') tc[r.toolName].damaged++;
+    tc[r.toolName].employees.add(r.empName);
+  });
+  let entries=Object.entries(tc).sort((a,b)=>b[1].total-a[1].total);
+  if(q) entries=entries.filter(([name])=>name.toLowerCase().includes(q));
+  if(!entries.length){grid.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text2);font-size:.83rem;grid-column:1/-1">No records yet.</div>';return;}
+  grid.innerHTML=entries.map(([name,s])=>`
+    <div class="summary-card">
+      <h4 title="${name}">${name}</h4>
+      <div class="summary-stat"><span>Total Issues</span><span>${s.total}</span></div>
+      <div class="summary-stat"><span>Returned</span><span style="color:var(--success)">${s.returned}</span></div>
+      <div class="summary-stat"><span>Currently Out</span><span style="color:var(--accent)">${s.total-s.returned}</span></div>
+      <div class="summary-stat"><span>Overdue</span><span style="color:var(--danger)">${s.overdue}</span></div>
+      <div class="summary-stat"><span>Damaged</span><span style="color:var(--warning)">${s.damaged}</span></div>
+      <div class="summary-stat"><span>Employees Used</span><span>${s.employees.size}</span></div>
+    </div>`).join('');
+}
+
+// ===== SHIFT REPORT =====
+function clearShiftFilters(){
+  document.getElementById('shift-filter').value='all';
+  document.getElementById('shift-date-from').value='';
+  document.getElementById('shift-date-to').value='';
+  renderShiftReport();
+}
+function renderShiftReport(){
+  const sf=document.getElementById('shift-filter')?.value||'all';
+  const dfrom=document.getElementById('shift-date-from')?.value||'';
+  const dto=document.getElementById('shift-date-to')?.value||'';
+  let f=records.map((r,i)=>({...r,idx:i}));
+  if(sf!=='all') f=f.filter(r=>r.shift===sf);
+  if(dfrom) f=f.filter(r=>r.issueDateISO>=dfrom);
+  if(dto) f=f.filter(r=>r.issueDateISO<=dto);
+  // Stats
+  const morning=f.filter(r=>r.shift==='Morning').length;
+  const evening=f.filter(r=>r.shift==='Evening').length;
+  const night=f.filter(r=>r.shift==='Night').length;
+  document.getElementById('shift-stats-row').innerHTML=`
+    <div class="stat-card"><div class="sc-icon" style="background:#fef3c7">🌅</div><div><div class="sc-num" style="color:#92400e">${morning}</div><div class="sc-label">Morning</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#ede9fe">🌆</div><div><div class="sc-num" style="color:#4c1d95">${evening}</div><div class="sc-label">Evening</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#1e293b">🌙</div><div><div class="sc-num" style="color:#94a3b8">${night}</div><div class="sc-label">Night</div></div></div>
+    <div class="stat-card"><div class="sc-icon" style="background:#f5f3ff">📦</div><div><div class="sc-num" style="color:var(--info)">${f.length}</div><div class="sc-label">Total</div></div></div>`;
+  document.getElementById('shift-report-title').textContent=`📋 Records (${f.length})`;
+  const tbody=document.getElementById('shift-tbody');
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="13">No records for selected shift/date.</td></tr>';return;}
+  tbody.innerHTML=f.map((r,i)=>`
+    <tr>
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td><b>${r.empName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td>${r.toolName}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate} ${r.issueTime||''}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.returnDate?r.returnDate+' '+r.returnTime:'—'}</td>
+      <td>${statusBadge(r)}</td>
+      <td>${condBadge(r.condition)}</td>
+    </tr>`).join('');
+}
+
+function downloadShiftExcel(){
+  const sf=document.getElementById('shift-filter')?.value||'all';
+  const dfrom=document.getElementById('shift-date-from')?.value||'';
+  const dto=document.getElementById('shift-date-to')?.value||'';
+  let f=records;
+  if(sf!=='all') f=f.filter(r=>r.shift===sf);
+  if(dfrom) f=f.filter(r=>r.issueDateISO>=dfrom);
+  if(dto) f=f.filter(r=>r.issueDateISO<=dto);
+  if(!f.length){showToast('No records for selected filter!','error');return;}
+  const data=f.map((r,i)=>({'S.No':i+1,'Shift':r.shift||'—','Employee Name':r.empName,'Employee ID':r.empId,'Tool Name':r.toolName,'Tool Code':r.toolCode||'','Book No':r.bookNo||'','Page No':r.pageNo||'','Quantity':r.qty||1,'Issue Date':r.issueDate,'Issue Time':r.issueTime,'Return Date':r.returnDate||'','Return Time':r.returnTime||'','Status':isOverdue(r)?'Overdue':r.status,'Condition':r.condition||''}));
+  const ws=XLSX.utils.json_to_sheet(data);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Shift Report');
+  XLSX.writeFile(wb,`ShiftReport_${sf}_${todayISO()}.xlsx`);
+  showToast('Shift Excel downloaded!');
+}
+
+// ===== EMPLOYEE HISTORY =====
+function renderEmpHistory(){
+  const q=(document.getElementById('emp-search')?.value||'').toLowerCase();
+  const tbody=document.getElementById('emp-tbody');
+  if(!q){tbody.innerHTML='<tr class="empty-row"><td colspan="14">Search an employee to see history.</td></tr>';return;}
+  const f=records.map((r,i)=>({...r,idx:i})).filter(r=>r.empName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q));
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="14">No records found.</td></tr>';return;}
+  tbody.innerHTML=f.map((r,i)=>`
+    <tr>
+      <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
+      <td><b>${r.empName}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td>${r.toolName}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
+      <td>${shiftBadge(r.shift)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate} ${r.issueTime}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.returnDate?r.returnDate+' '+r.returnTime:'—'}</td>
+      <td>${statusBadge(r)}</td>
+      <td>${condBadge(r.condition)}</td>
+      <td style="font-size:.76rem">${r.remarks||'—'}</td>
+    </tr>`).join('');
+}
+
+// ===== AUDIT LOG =====
+function renderAuditLog(){
+  const filter=document.getElementById('audit-filter')?.value||'all';
+  let logs=auditLog;
+  if(filter!=='all') logs=logs.filter(l=>l.type===filter);
+  const container=document.getElementById('audit-log-container');
+  if(!logs.length){container.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text2);font-size:.83rem">No audit logs.</div>';return;}
+  container.innerHTML=logs.map(l=>`
+    <div class="audit-item audit-${l.type}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+        <div><b>${auditIcon(l.type)} ${l.msg}</b></div>
+        <span style="background:var(--primary);color:#fff;font-size:.6rem;font-family:'JetBrains Mono',monospace;padding:.1rem .4rem;border-radius:4px;white-space:nowrap;flex-shrink:0">${l.user||'System'}</span>
+      </div>
+      <div class="audit-time">🕐 ${l.time}</div>
+    </div>`).join('');
+}
+function auditIcon(t){
+  const icons={issue:'📤',return:'📥',edit:'✏️',delete:'🗑️',backup:'💾',restore:'📂',login:'🔓',lock:'🔒'};
+  return icons[t]||'📋';
+}
+function clearAuditLog(){
+  if(!auditLog.length){showToast('No audit logs to clear!','error');return;}
+  // Check admin
+  const isAdmin = currentUser && appUsers.find(u=>u.name===currentUser.name && u.isAdmin);
+  if(!isAdmin){showToast('Only Admin can clear audit log!','error');return;}
+  showConfirm('Download & Clear Audit Log',
+    'Audit log will be downloaded as Excel before clearing. This cannot be undone.',()=>{
+    // Download first
+    downloadAuditExcel(true);
+    // Then clear after short delay
+    setTimeout(()=>{
+      auditLog=[];saveAudit();renderAuditLog();
+      showToast('Audit log downloaded & cleared!');
+    },600);
+  });
+}
+
+function downloadAuditExcel(silent=false){
+  if(!auditLog.length){if(!silent)showToast('No audit logs!','error');return;}
+  const adminPin = appUsers.find(u=>u.isAdmin)?.pin||'1234';
+  const auditData = auditLog.map((l,i)=>({
+    'S.No':i+1,
+    'Action':l.type||'',
+    'Description':l.msg||'',
+    'Operator':l.user||'System',
+    'Date & Time':l.time||''
+  }));
+  const auditWs = XLSX.utils.json_to_sheet(auditData);
+  auditWs['!cols']=[{wch:5},{wch:12},{wch:50},{wch:18},{wch:22}];
+  // Style header row
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, auditWs, 'Audit Log');
+  // Sheet protection with admin PIN
+  auditWs['!protect'] = { password: adminPin, sheet: true, objects: true, scenarios: true,
+    selectLockedCells: true, selectUnlockedCells: true };
+  const summary=[
+    ['Tool Crib — Audit Log Export'],
+    ['Exported by:', currentUser?.name||'System'],
+    ['Exported on:', new Date().toLocaleString('en-IN')],
+    ['Total Entries:', auditLog.length],
+    ['',''],
+    ['Note: Audit Log sheet is protected with Admin PIN']
+  ];
+  const sumWs = XLSX.utils.aoa_to_sheet(summary);
+  XLSX.utils.book_append_sheet(wb, sumWs, 'Export Info');
+  XLSX.writeFile(wb, `AuditLog_${todayISO()}.xlsx`);
+  if(!silent) showToast('Audit log downloaded!');
+}
+
+// ===== ISSUE SLIP =====
+function openSlipModal(idx){
+  const r=records[idx];
+  const companyName=localStorage.getItem('tc_company')||'TOOL CRIB';
+  document.getElementById('slip-content').innerHTML=`
+    <div class="slip-header">
+      <h2>${companyName}</h2>
+      <p>Tool Issue Slip</p>
+      <p style="font-size:.68rem;margin-top:.2rem;font-family:'JetBrains Mono',monospace">#${String(idx+1).padStart(4,'0')}</p>
+    </div>
+    <div class="slip-row"><span class="slip-label">Employee</span><span class="slip-val">${r.empName}</span></div>
+    <div class="slip-row"><span class="slip-label">Employee ID</span><span class="slip-val">${r.empId}</span></div>
+    <div class="slip-row"><span class="slip-label">Tool Name</span><span class="slip-val">${r.toolName}</span></div>
+    <div class="slip-row"><span class="slip-label">Tool Code</span><span class="slip-val">${r.toolCode||'—'}</span></div>
+    <div class="slip-row"><span class="slip-label">Book No / Page</span><span class="slip-val">${r.bookNo} / ${r.pageNo}</span></div>
+    <div class="slip-row"><span class="slip-label">Quantity</span><span class="slip-val">${r.qty||1}</span></div>
+    <div class="slip-row"><span class="slip-label">Shift</span><span class="slip-val">${r.shift||'—'}</span></div>
+    <div class="slip-row"><span class="slip-label">Issue Date</span><span class="slip-val">${r.issueDate}</span></div>
+    <div class="slip-row"><span class="slip-label">Issue Time</span><span class="slip-val">${r.issueTime||'—'}</span></div>
+    ${r.remarks?`<div class="slip-row"><span class="slip-label">Remarks</span><span class="slip-val">${r.remarks}</span></div>`:''}
+    <div class="slip-sign">
+      <div><div class="sign-line"></div><div>Issued By</div></div>
+      <div><div class="sign-line"></div><div>Employee Sign</div></div>
+    </div>
+    <div class="slip-footer">Tool Crib Management System v5</div>`;
+  document.getElementById('slip-modal').classList.add('show');
+}
+function closeSlipModal(){ document.getElementById('slip-modal').classList.remove('show'); }
+function printSlip(){
+  const slipHTML=document.getElementById('slip-content').innerHTML;
+  const win=window.open('','_blank','width=400,height=600');
+  win.document.write(`<!DOCTYPE html><html><head><title>Issue Slip</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Plus Jakarta Sans',sans-serif;padding:1.5rem;font-size:13px;}
+  .slip-header{text-align:center;border-bottom:2px solid #000;padding-bottom:.8rem;margin-bottom:.8rem;}
+  .slip-header h2{font-size:1.1rem;font-weight:800;}
+  .slip-header p{font-size:.75rem;color:#555;}
+  .slip-row{display:flex;justify-content:space-between;padding:.28rem 0;font-size:.8rem;border-bottom:1px dashed #ccc;}
+  .slip-label{font-weight:700;color:#555;}
+  .slip-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;}
+  .slip-footer{text-align:center;margin-top:.8rem;font-size:.7rem;color:#888;border-top:1px solid #ccc;padding-top:.5rem;}
+  .slip-sign{display:flex;justify-content:space-between;margin-top:1.5rem;font-size:.72rem;}
+  .slip-sign div{text-align:center;}
+  .sign-line{width:100px;border-top:1px solid #000;margin:0 auto .2rem;}
+  </style></head><body>${slipHTML}</body></html>`);
+  win.document.close();
+  setTimeout(()=>{win.print();},500);
+}
+
+// ===== EDIT =====
+function openEditModal(idx){
+  const r=records[idx];
+  document.getElementById('em-idx').value=idx;
+  document.getElementById('em-empname').value=r.empName;
+  document.getElementById('em-empid').value=r.empId;
+  document.getElementById('em-toolname').value=r.toolName;
+  document.getElementById('em-toolcode').value=r.toolCode||'';
+  document.getElementById('em-bookno').value=r.bookNo;
+  document.getElementById('em-pageno').value=r.pageNo;
+  document.getElementById('em-qty').value=r.qty||1;
+  document.getElementById('em-shift').value=r.shift||'Morning';
+  document.getElementById('em-remarks').value=r.remarks||'';
+  document.getElementById('edit-modal').classList.add('show');
+}
+function closeEditModal(){ document.getElementById('edit-modal').classList.remove('show'); }
+function confirmEdit(){
+  const idx=parseInt(document.getElementById('em-idx').value);
+  const old={...records[idx]};
+  records[idx].empName=document.getElementById('em-empname').value.trim();
+  records[idx].empId=document.getElementById('em-empid').value.trim();
+  records[idx].toolName=document.getElementById('em-toolname').value.trim();
+  records[idx].toolCode=document.getElementById('em-toolcode').value.trim();
+  records[idx].bookNo=document.getElementById('em-bookno').value.trim();
+  records[idx].pageNo=document.getElementById('em-pageno').value.trim();
+  records[idx].qty=document.getElementById('em-qty').value;
+  records[idx].shift=document.getElementById('em-shift').value;
+  records[idx].remarks=document.getElementById('em-remarks').value.trim();
+  saveData(); closeEditModal(); renderMaster(); renderIssued();
+  addAudit('edit',`Record edited: "${records[idx].toolName}" for ${records[idx].empName}`);
+  showToast('Record updated!');
+}
+
+// ===== DELETE =====
+function confirmDelete(idx){
+  showConfirm('Delete Record','This will permanently delete this record. Are you sure?',()=>{
+    const r=records[idx];
+    addAudit('delete',`Record deleted: "${r.toolName}" issued to ${r.empName}`);
+    records.splice(idx,1); saveData();
+    renderMaster(); renderIssued(); renderPendingReturn(); updateDashboard(); renderRecent();
+    showToast('Record deleted!','error');
+  });
+}
+
+// ===== BACKUP / RESTORE =====
+function backupData(){
+  const data={
+    version:'v5',
+    exported: new Date().toISOString(),
+    records, empMaster, toolMaster, auditLog, appUsers
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`ToolCrib_Backup_${todayISO()}.json`; a.click();
+  URL.revokeObjectURL(url);
+  addAudit('backup',`Data backed up — ${records.length} records`);
+  showToast('Backup saved! Store it in OneDrive / WhatsApp 💾');
+}
+
+function restoreData(input){
+  const file=input.files[0]; if(!file) return;
+  showConfirm('Restore Backup','This will replace ALL current data with the backup. Continue?',()=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      try{
+        const data=JSON.parse(e.target.result);
+        if(data.records) records=data.records;
+        if(data.empMaster) empMaster=data.empMaster;
+        if(data.toolMaster) toolMaster=data.toolMaster;
+        if(data.auditLog) auditLog=data.auditLog;
+        if(data.appUsers) appUsers=data.appUsers;
+        saveData(); saveEmpMaster(); saveToolMaster(); saveAudit(); saveUsers();
+        updateDashboard(); renderRecent(); renderSettings();
+        addAudit('restore',`Data restored — ${records.length} records loaded`);
+        showToast(`Restored! ${records.length} records loaded ✅`);
+      }catch(err){
+        showToast('Invalid backup file!','error');
+      }
+      input.value='';
+    };
+    reader.readAsText(file);
+  });
+}
+
+// ===== SETTINGS =====
+function renderSettings(){
+  document.getElementById('emp-count').textContent=empMaster.length;
+  document.getElementById('tool-count').textContent=toolMaster.length;
+  document.getElementById('users-count').textContent=appUsers.length;
+  // User list
+  const ul=document.getElementById('user-mgmt-list');
+  ul.innerHTML=appUsers.length?appUsers.map((u,i)=>`
+    <div class="user-mgmt-item">
+      <span>${u.avatar||'👤'} <span class="umi-name">${u.name}</span>
+        ${u.isAdmin?'<span class="umi-role" style="background:#fef3c7;color:#92400e">⭐ Admin</span>':'<span class="umi-role">Operator</span>'}
+        ${u.lastLogin?`<span style="font-size:.65rem;color:var(--text2);margin-left:.3rem">Last: ${u.lastLogin}</span>`:''}
+      </span>
+      <span class="umi-actions">
+        <button class="umi-btn edit-btn" onclick="toggleAdmin(${i})" title="${u.isAdmin?'Remove Admin':'Make Admin'}">${u.isAdmin?'⭐':'☆'}</button>
+        <button class="umi-btn edit-btn" onclick="changeUserPin(${i})">✏️ PIN</button>
+        <button class="umi-btn" onclick="removeUser(${i})">🗑️</button>
+      </span>
+    </div>`).join(''):'<p style="font-size:.78rem;color:var(--text2);padding:.5rem 0">No users yet.</p>';
+  // Employee & Tool lists
+  const el=document.getElementById('emp-master-list');
+  el.innerHTML=empMaster.length?empMaster.map((e,i)=>`
+    <div class="master-item">
+      <span>${e.name}</span>
+      <span style="display:flex;align-items:center;gap:.4rem">
+        <span class="mi-code">${e.id}</span>
+        <button class="mi-del" onclick="removeEmp(${i})">✕</button>
+      </span>
+    </div>`).join(''):'<p style="font-size:.78rem;color:var(--text2);padding:.5rem 0">No employees added yet.</p>';
+  const tl=document.getElementById('tool-master-list');
+  tl.innerHTML=toolMaster.length?toolMaster.map((t,i)=>`
+    <div class="master-item">
+      <span>${t.name}</span>
+      <span style="display:flex;align-items:center;gap:.4rem">
+        <span class="mi-code">${t.code||'—'}</span>
+        <button class="mi-del" onclick="removeTool(${i})">✕</button>
+      </span>
+    </div>`).join(''):'<p style="font-size:.78rem;color:var(--text2);padding:.5rem 0">No tools added yet.</p>';
+}
+
+function addUserManual(){
+  const name=document.getElementById('new-username').value.trim();
+  const pin=document.getElementById('new-userpin').value.trim();
+  const isAdmin=document.getElementById('new-useradmin').checked;
+  if(!name){showToast('Enter a name!','error');return;}
+  if(!/^\d{4}$/.test(pin)){showToast('PIN must be exactly 4 digits!','error');return;}
+  if(appUsers.find(u=>u.name.toLowerCase()===name.toLowerCase())){showToast('User already exists!','error');return;}
+  const idx=appUsers.length;
+  appUsers.push({name, pin, isAdmin, avatar: AVATARS[idx % AVATARS.length]});
+  saveUsers();
+  document.getElementById('new-username').value='';
+  document.getElementById('new-userpin').value='';
+  document.getElementById('new-useradmin').checked=false;
+  renderSettings();
+  addAudit('edit',`New user "${name}" added${isAdmin?' (Admin)':''}`);
+  showToast(`User "${name}" added${isAdmin?' as Admin':''}!`);
+}
+
+function toggleAdmin(i){
+  const wasAdmin=appUsers[i].isAdmin;
+  appUsers[i].isAdmin=!wasAdmin;
+  saveUsers(); renderSettings();
+  addAudit('edit',`"${appUsers[i].name}" ${appUsers[i].isAdmin?'promoted to Admin':'removed from Admin'}`);
+  showToast(`"${appUsers[i].name}" is now ${appUsers[i].isAdmin?'⭐ Admin':'Operator'}!`);
+}
+
+function changeUserPin(i){
+  const newPin=prompt(`Enter new 4-digit PIN for "${appUsers[i].name}":`);
+  if(!newPin) return;
+  if(!/^\d{4}$/.test(newPin)){showToast('PIN must be 4 digits!','error');return;}
+  appUsers[i].pin=newPin; saveUsers();
+  renderSettings();
+  addAudit('edit',`PIN changed for user "${appUsers[i].name}"`);
+  showToast(`PIN updated for ${appUsers[i].name}!`);
+}
+
+function removeUser(i){
+  showConfirm('Remove User',`Remove "${appUsers[i].name}" from user list?`,()=>{
+    const name=appUsers[i].name;
+    appUsers.splice(i,1); saveUsers(); renderSettings();
+    addAudit('delete',`User "${name}" removed`);
+    showToast(`User "${name}" removed!`,'error');
+  });
+}
+
+// ===== UPLOAD EXCEL =====
+function uploadEmployees(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const wb=XLSX.read(e.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+    let added=0;
+    rows.forEach((row,i)=>{
+      if(i===0) return;
+      const name=(row[0]||'').toString().trim();
+      const id=(row[1]||'').toString().trim();
+      if(name && id && !empMaster.find(e=>e.id===id)){
+        empMaster.push({name,id}); added++;
+      }
+    });
+    saveEmpMaster(); renderSettings();
+    showToast(`${added} employees imported!`);
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function uploadTools(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const wb=XLSX.read(e.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+    let added=0;
+    rows.forEach((row,i)=>{
+      if(i===0) return;
+      const name=(row[0]||'').toString().trim();
+      const code=(row[1]||'').toString().trim();
+      if(name && !toolMaster.find(t=>t.name===name)){
+        toolMaster.push({name,code}); added++;
+      }
+    });
+    saveToolMaster(); renderSettings();
+    showToast(`${added} tools imported!`);
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function addEmployeeManual(){
+  const name=document.getElementById('new-empname').value.trim();
+  const id=document.getElementById('new-empid').value.trim();
+  if(!name||!id){showToast('Enter both name and ID!','error');return;}
+  if(empMaster.find(e=>e.id===id)){showToast('Employee ID already exists!','error');return;}
+  empMaster.push({name,id}); saveEmpMaster();
+  document.getElementById('new-empname').value='';
+  document.getElementById('new-empid').value='';
+  renderSettings(); showToast(`Employee "${name}" added!`);
+}
+
+function addToolManual(){
+  const name=document.getElementById('new-toolname').value.trim();
+  const code=document.getElementById('new-toolcode').value.trim();
+  if(!name){showToast('Enter tool name!','error');return;}
+  if(toolMaster.find(t=>t.name===name)){showToast('Tool already exists!','error');return;}
+  toolMaster.push({name,code}); saveToolMaster();
+  document.getElementById('new-toolname').value='';
+  document.getElementById('new-toolcode').value='';
+  renderSettings(); showToast(`Tool "${name}" added!`);
+}
+
+function removeEmp(i){ empMaster.splice(i,1); saveEmpMaster(); renderSettings(); }
+function removeTool(i){ toolMaster.splice(i,1); saveToolMaster(); renderSettings(); }
+
+// ===== DOWNLOAD TEMPLATES =====
+function downloadTemplates(){
+  const empWs=XLSX.utils.aoa_to_sheet([['Employee Name','Employee ID'],['Rajesh Kumar','EMP-001'],['Priya Devi','EMP-002']]);
+  empWs['!cols']=[{wch:25},{wch:15}];
+  const toolWs=XLSX.utils.aoa_to_sheet([['Tool Name','Tool Code'],['Vernier Caliper','VC-001'],['Micrometer','MC-002'],['Torque Wrench','TW-003']]);
+  toolWs['!cols']=[{wch:30},{wch:15}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,empWs,'Employee Template');
+  XLSX.utils.book_append_sheet(wb,toolWs,'Tool Template');
+  XLSX.writeFile(wb,'ToolCrib_Templates.xlsx');
+  showToast('Templates downloaded!');
+}
+
+// ===== EXCEL DOWNLOAD =====
+function downloadExcel(){
+  if(!records.length){showToast('No records to download!','error');return;}
+  const data=records.map((r,i)=>({
+    'S.No':i+1,'Shift':r.shift||'—','Employee Name':r.empName,'Employee ID':r.empId,
+    'Tool Name':r.toolName,'Tool Code':r.toolCode||'',
+    'Book No':r.bookNo||'','Page No':r.pageNo||'',
+    'Quantity':r.qty||1,'Remarks':r.remarks||'',
+    'Issue Date':r.issueDate,'Issue Time':r.issueTime,
+    'Return Date':r.returnDate||'','Return Time':r.returnTime||'',
+    'Status':isOverdue(r)?'Overdue':r.status,
+    'Tool Condition':r.condition||'','Return Remarks':r.returnRemarks||''
+  }));
+  const ws=XLSX.utils.json_to_sheet(data);
+  ws['!cols']=[{wch:5},{wch:10},{wch:20},{wch:14},{wch:25},{wch:12},{wch:10},{wch:8},{wch:8},{wch:20},{wch:14},{wch:12},{wch:14},{wch:12},{wch:12},{wch:14},{wch:20}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Tool Crib Records');
+  const summary=[
+    ['Tool Crib Management v5 — Summary'],['Generated:',new Date().toLocaleString()],[''],
+    ['Total Records',records.length],
+    ['Currently Issued',records.filter(r=>r.status==='Issued').length],
+    ['Returned',records.filter(r=>r.status==='Returned').length],
+    ['Overdue',records.filter(r=>isOverdue(r)).length],
+    ['Damaged on Return',records.filter(r=>r.condition==='Damaged').length],
+    ['Morning Shift',records.filter(r=>r.shift==='Morning').length],
+    ['Evening Shift',records.filter(r=>r.shift==='Evening').length],
+    ['Night Shift',records.filter(r=>r.shift==='Night').length],
+  ];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(summary),'Summary');
+  // Sheet 3: Audit Log — Admin PIN protected
+  if(auditLog.length){
+    const adminPin=appUsers.find(u=>u.isAdmin)?.pin||'1234';
+    const auditData=auditLog.map((l,i)=>({'S.No':i+1,'Action':l.type||'','Description':l.msg||'','Operator':l.user||'System','Date & Time':l.time||''}));
+    const auditWs=XLSX.utils.json_to_sheet(auditData);
+    auditWs['!cols']=[{wch:5},{wch:12},{wch:50},{wch:18},{wch:22}];
+    auditWs['!protect']={password:adminPin,sheet:true,objects:true,scenarios:true,selectLockedCells:true,selectUnlockedCells:true};
+    XLSX.utils.book_append_sheet(wb,auditWs,'Audit Log (Admin)');
+  }
+  XLSX.writeFile(wb,`ToolCrib_${todayISO()}.xlsx`);
+  showToast('Excel downloaded! Sheet 3 = Audit Log (Admin protected)');
+}
+
+// ===== INIT =====
+updateDashboard();
+renderRecent();
+startClock();
+initUsers();
+// Start at login screen always
+document.getElementById('login-screen').classList.remove('hide');
+</script>
+</body>
+</html>
