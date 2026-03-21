@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Tool Crib">
+<meta name="theme-color" content="#0f4c81">
 <title>Tool Crib Management v5</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -15,6 +20,111 @@
   --success:#10b981;--success-light:#ecfdf5;
   --warning:#f97316;--info:#6366f1;--info-light:#eef2ff;
   --sw:235px;
+  --card-bg:#fff;--input-bg:#f8fafc;
+}
+/* DARK MODE */
+body.dark{
+  --bg:#0f172a;--white:#1e293b;--text:#f1f5f9;--text2:#94a3b8;
+  --border:#334155;--primary:#1d4ed8;--accent:#f59e0b;
+  --danger:#ef4444;--danger-light:#450a0a;
+  --success:#10b981;--success-light:#052e16;
+  --warning:#f97316;--info:#6366f1;--info-light:#1e1b4b;
+  --card-bg:#1e293b;--input-bg:#0f172a;
+}
+body.dark .stat-card,
+body.dark .form-card,
+body.dark .table-card,
+body.dark .chart-card,
+body.dark .settings-card,
+body.dark .modal,
+body.dark .summary-card{background:var(--card-bg);border-color:var(--border);}
+body.dark .field input,
+body.dark .field select,
+body.dark .field textarea,
+body.dark .add-manual input,
+body.dark .filter-row select,
+body.dark .filter-row input,
+body.dark .shift-select,
+body.dark .field input[readonly]{background:#1a2744;color:#94a3b8;border-color:#334155;}
+body.dark .search-box{background:var(--input-bg);border-color:var(--border);}
+body.dark .search-box input{color:var(--text);}
+body.dark .btn-outline{background:var(--card-bg);color:var(--text);border-color:var(--border);}
+body.dark .btn-outline:hover{border-color:var(--primary);color:#93c5fd;}
+body.dark thead tr{background:#1a2744;}
+body.dark th{color:var(--text2);}
+body.dark tr:hover td{background:#1a2744;}
+body.dark .audit-item{background:#1a2744;}
+body.dark .master-item{background:#1a2744;}
+body.dark .auto-badge{background:#1e3a5f;color:#93c5fd;}
+body.dark .fill-badge{background:#052e16;color:#6ee7b7;}
+body.dark .badge-issued{background:#451a03;color:#fcd34d;}
+body.dark .badge-returned{background:#052e16;color:#6ee7b7;}
+body.dark .badge-overdue{background:#450a0a;color:#fca5a5;}
+body.dark .badge-good{background:#052e16;color:#6ee7b7;}
+body.dark .badge-damaged{background:#450a0a;color:#fca5a5;}
+body.dark .badge-morning{background:#451a03;color:#fcd34d;}
+body.dark .badge-evening{background:#1e1b4b;color:#c4b5fd;}
+body.dark .badge-night{background:#0f172a;color:#94a3b8;}
+body.dark .count-pill{background:#1d4ed8;}
+body.dark .toast{background:#1e293b;color:#f1f5f9;}
+body.dark .toast.success{background:#065f46;}
+body.dark .toast.error{background:#7f1d1d;}
+body.dark .role-admin{background:#451a03;color:#fcd34d;}
+body.dark .role-issuer{background:#052e16;color:#6ee7b7;}
+body.dark .role-viewer{background:#1e1b4b;color:#c4b5fd;}
+body.dark .summary-stat span:last-child{color:var(--text);}
+body.dark .master-item .mi-code{background:#334155;color:#94a3b8;}
+body.dark .mi-del{color:#64748b;}
+body.dark .empty-row td{color:#64748b;}
+body.dark .pg-sub{color:var(--text2);}
+body.dark .sc-label{color:var(--text2);}
+body.dark .chart-card h4{color:var(--text2);}
+body.dark .table-toolbar h3{color:var(--text);}
+body.dark .form-card h3{color:var(--text);}
+body.dark .settings-card h3{color:var(--text);}
+body.dark .settings-card p{color:var(--text2);}
+body.dark .upload-zone p{color:var(--text2);}
+body.dark .upload-zone .uz-hint{color:#64748b;}
+body.dark .add-manual input{color:var(--text);}
+body.dark select option{background:#1e293b;color:var(--text);}
+body.dark .umi-btn{background:#1a2744;border-color:#334155;color:var(--text2);}
+body.dark .pin-setting-row input{background:var(--input-bg);color:var(--text);}
+body.dark .upload-zone{background:var(--input-bg);border-color:var(--border);}
+body.dark .upload-zone:hover{background:#1a2744;border-color:var(--primary);}
+body.dark .ac-dropdown{background:#1e293b;border-color:var(--primary);}
+body.dark .ac-item{border-color:#334155;color:var(--text);}
+body.dark .ac-item:hover{background:#1a2744;}
+body.dark .pin-setting-row input{background:var(--input-bg);color:var(--text);border-color:var(--border);}
+body.dark .add-user-form input,
+body.dark .add-user-form select{background:var(--input-bg);color:var(--text);border-color:var(--border);}
+body.dark .user-mgmt-item{background:#1a2744;}
+body.dark .umi-btn{border-color:var(--border);color:var(--text2);}
+body.dark .viewer-banner{background:#1e1b4b;border-color:#6366f1;color:#a5b4fc;}
+body.dark .emp-self-header{background:linear-gradient(135deg,#1d4ed8,#2563eb);}
+
+/* THEME TOGGLE BUTTON */
+/* TOOL ROWS - Multi-tool issue */
+.tool-row{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:.9rem;margin-bottom:.6rem;position:relative;}
+.tool-row-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;}
+.tool-row-num{font-size:.68rem;font-weight:700;color:var(--primary);font-family:'JetBrains Mono',monospace;background:#e8f0fb;padding:.1rem .45rem;border-radius:5px;}
+.tool-row-del{background:var(--danger-light);color:var(--danger);border:none;border-radius:7px;padding:.28rem .6rem;cursor:pointer;font-size:.72rem;font-weight:700;transition:all .15s;}
+.tool-row-del:hover{background:var(--danger);color:#fff;}
+.tool-row-grid{display:grid;grid-template-columns:1fr auto auto;gap:.7rem;align-items:end;}
+@media(max-width:768px){.tool-row-grid{grid-template-columns:1fr 1fr;}}
+
+/* MULTI-TOOL SLIP */
+.slip-tools-section{margin:.5rem 0;}
+.slip-tools-title{font-weight:700;font-size:.78rem;color:#555;margin-bottom:.3rem;padding-bottom:.2rem;border-bottom:1px solid #ccc;}
+.slip-tool-item{display:flex;justify-content:space-between;align-items:center;padding:.22rem 0;font-size:.78rem;border-bottom:1px dashed #e5e5e5;}
+.slip-tool-item:last-child{border-bottom:none;}
+.slip-tool-name{flex:1;}
+.slip-tool-qty{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#555;}
+
+.theme-toggle{position:fixed;bottom:1.5rem;left:calc(var(--sw) + 1rem);z-index:150;background:var(--white);border:1.5px solid var(--border);border-radius:50px;padding:.4rem .75rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.75rem;font-weight:700;color:var(--text2);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.theme-toggle:hover{border-color:var(--primary);color:var(--primary);}
+.theme-toggle .tt-icon{font-size:1rem;}
+@media(max-width:768px){
+  .theme-toggle{left:1rem;bottom:1rem;}
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
@@ -174,7 +284,16 @@ tr:hover td{background:#f8fafc;}
 .logged-bar .lb-time{color:rgba(255,255,255,.45);font-size:.6rem;font-family:'JetBrains Mono',monospace;}
 .logged-bar button{background:rgba(255,255,255,.15);border:none;color:rgba(255,255,255,.8);font-size:.62rem;font-weight:700;padding:.22rem .5rem;border-radius:5px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;white-space:nowrap;}
 .logged-bar button:hover{background:rgba(255,255,255,.28);color:#fff;}
-/* User management in settings */
+/* Role badges in sidebar */
+.role-badge{font-size:.55rem;font-family:'JetBrains Mono',monospace;font-weight:700;padding:.1rem .38rem;border-radius:4px;margin-left:.3rem;}
+.role-admin{background:#fef3c7;color:#92400e;}
+.role-issuer{background:#dcfce7;color:#166534;}
+.role-viewer{background:#e0e7ff;color:#3730a3;}
+/* Role-restricted elements */
+.role-hidden{display:none!important;}
+/* Viewer mode banner */
+.viewer-banner{background:#e0e7ff;border:1.5px solid #6366f1;border-radius:8px;padding:.55rem 1rem;margin-bottom:1rem;font-size:.78rem;font-weight:600;color:#3730a3;display:none;align-items:center;gap:.5rem;}
+.viewer-banner.show{display:flex;}
 .user-mgmt-list{max-height:220px;overflow-y:auto;margin-top:.75rem;}
 .user-mgmt-item{display:flex;justify-content:space-between;align-items:center;padding:.5rem .7rem;background:var(--bg);border-radius:8px;margin-bottom:.4rem;font-size:.8rem;}
 .user-mgmt-item .umi-name{font-weight:700;}
@@ -267,20 +386,158 @@ tr:hover td{background:#f8fafc;}
 .summary-stat{display:flex;justify-content:space-between;font-size:.76rem;padding:.2rem 0;color:var(--text2);}
 .summary-stat span:last-child{font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;}
 
-/* HAMBURGER */
-.hamburger{display:none;position:fixed;top:1rem;left:1rem;z-index:200;background:var(--primary);color:#fff;border:none;border-radius:8px;padding:.5rem .7rem;font-size:1.1rem;cursor:pointer;}
+/* EMPLOYEE LOGIN TAB */
+.login-tabs{display:flex;gap:.5rem;margin-bottom:1.2rem;background:rgba(255,255,255,.1);border-radius:10px;padding:.3rem;}
+.login-tab{flex:1;padding:.55rem 1rem;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;color:rgba(255,255,255,.6);background:transparent;transition:all .2s;}
+.login-tab.active{background:#fff;color:var(--primary);}
+.emp-login-wrap{width:100%;max-width:320px;padding:0 1.2rem 2rem;}
+.emp-id-box{background:rgba(255,255,255,.1);border-radius:14px;padding:1.5rem;text-align:center;}
+.emp-id-box h4{color:#fff;font-size:.88rem;font-weight:700;margin-bottom:1rem;}
+.emp-id-input{width:100%;padding:.7rem 1rem;border:2px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;outline:none;text-align:center;letter-spacing:.1em;}
+.emp-id-input::placeholder{color:rgba(255,255,255,.4);letter-spacing:0;font-size:.82rem;}
+.emp-id-input:focus{border-color:rgba(255,255,255,.6);}
+.emp-id-btn{margin-top:.8rem;width:100%;padding:.65rem;border:none;border-radius:8px;background:#fff;color:var(--primary);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;transition:all .15s;}
+.emp-id-btn:hover{background:#e8f0fb;}
+.emp-create-pin{color:rgba(255,255,255,.7);font-size:.75rem;margin-bottom:.8rem;}
+.emp-create-pin b{color:#fff;}
+/* Employee history page */
+.emp-self-header{background:linear-gradient(135deg,var(--primary),#1a6bb5);border-radius:14px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;color:#fff;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.emp-self-header h3{font-size:1rem;font-weight:800;}
+.emp-self-header p{font-size:.75rem;opacity:.75;margin-top:.2rem;}
+.emp-self-stats{display:flex;gap:1rem;flex-wrap:wrap;}
+.ess-item{text-align:center;}
+.ess-num{font-size:1.3rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.ess-label{font-size:.62rem;opacity:.7;}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:90;}
 
 /* DIVIDER */
 .section-divider{border:none;border-top:1px solid var(--border);margin:1.2rem 0;}
 
+/* TOUCH FRIENDLY — prevent zoom on input focus (iOS) */
 @media(max-width:768px){
+  .field input,.field select,.field textarea,
+  .add-manual input,.pin-setting-row input,
+  .emp-id-input,.gs-box input{
+    font-size:16px!important;
+  }
+  /* Larger tap targets */
+  .nav-item{padding:.75rem 1.2rem;}
+  .btn-sm{min-height:32px;min-width:32px;}
+  .pin-btn{min-height:48px;}
+  /* Remove hover effects on touch */
+  .stat-card:hover{transform:none;}
+}
+
+/* ===== MOBILE FRIENDLY ===== */
+@media(max-width:768px){
+  /* Hamburger & Sidebar */
   .hamburger{display:block;}
   .sidebar{transform:translateX(-100%);}
   .sidebar.open{transform:translateX(0);}
   .overlay.show{display:block;}
+
+  /* Main content */
   .main{margin-left:0;padding:4.5rem 1rem 2rem;}
+  
+  /* Global search bar */
+  .gs-label{font-size:.68rem;}
+  .gs-date{font-size:.72rem;padding:.35rem .5rem;}
+
+  /* Stats row — 2 columns */
+  .stats-row{grid-template-columns:repeat(2,1fr);gap:.65rem;}
+  .sc-num{font-size:1.25rem;}
+
+  /* Page header — stack vertically */
+  .pg-hdr{flex-direction:column;align-items:flex-start;gap:.6rem;}
+  .pg-title{font-size:1.15rem;}
+  .btn-row{flex-wrap:wrap;gap:.4rem;}
+  .btn{font-size:.75rem;padding:.5rem .85rem;}
+
+  /* Form grid — single column */
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid .field[style*="grid-column"]{grid-column:1!important;}
+  .form-card{padding:1rem;}
+
+  /* Tables — horizontal scroll with card feel */
+  .table-card{border-radius:10px;}
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  table{min-width:600px;}
+  th{font-size:.6rem;padding:.5rem .6rem;}
+  td{font-size:.73rem;padding:.5rem .6rem;}
+  .table-toolbar{flex-direction:column;align-items:flex-start;gap:.5rem;padding:.7rem .9rem;}
+  .search-box input{width:140px;}
+
+  /* Filter row — wrap */
+  .filter-row{gap:.4rem;}
+  .filter-row select,.filter-row input{font-size:.73rem;padding:.35rem .55rem;}
+
+  /* Modals — full width */
+  .modal{width:95%;padding:1.2rem;margin:.5rem;}
+  .modal .form-grid{grid-template-columns:1fr;}
+
+  /* Settings grid — single column */
+  .settings-grid{grid-template-columns:1fr;}
+  .settings-card{padding:1.1rem;}
+  .add-user-form{grid-template-columns:1fr;}
+
+  /* Charts — single column */
+  .charts-grid{grid-template-columns:1fr;}
+  .chart-wrap{height:180px;}
+
+  /* Summary grid — 2 columns */
+  .summary-grid{grid-template-columns:repeat(2,1fr);}
+
+  /* Login screen */
+  .login-tabs{margin-bottom:.9rem;}
+  .login-tab{font-size:.76rem;padding:.45rem .7rem;}
+  .user-grid{grid-template-columns:repeat(2,1fr);gap:.5rem;}
+  .user-card{padding:.8rem .6rem;}
+  .user-select-wrap{padding:0 .9rem 1.2rem;}
+  .pin-entry-wrap{padding:0 .9rem 1.5rem;}
+  .pin-btn{padding:.75rem;font-size:.95rem;}
+
+  /* Logged bar */
+  .logged-bar{margin:.4rem .9rem .15rem;}
+  .lb-name{font-size:.72rem;}
+
+  /* Action buttons in tables */
+  .action-btns{gap:.25rem;}
+  .btn-sm{padding:.22rem .4rem;font-size:.64rem;}
+
+  /* Overdue threshold input */
+  .pg-hdr .btn-row{width:100%;}
+
+  /* Employee self header */
+  .emp-self-header{flex-direction:column;align-items:flex-start;gap:.7rem;}
+  .emp-self-stats{gap:.75rem;}
+
+  /* Slip modal */
+  .slip-modal .modal{max-width:95%;}
+
+  /* SAP import card */
+  .settings-card[style*="grid-column"]{grid-column:1!important;}
+
+  /* Audit log */
+  .audit-item{font-size:.74rem;padding:.5rem .7rem;}
+
+  /* Viewer banner */
+  .viewer-banner{font-size:.74rem;padding:.45rem .8rem;}
+
+  /* Toast */
+  .toast{right:.8rem;left:.8rem;bottom:1rem;font-size:.76rem;}
+
+  /* Count pill */
+  .count-pill{font-size:.6rem;}
+}
+
+/* Extra small screens */
+@media(max-width:380px){
   .stats-row{grid-template-columns:repeat(2,1fr);}
+  .summary-grid{grid-template-columns:1fr;}
+  .pg-title{font-size:1rem;}
+  .user-grid{grid-template-columns:1fr;}
+  .pin-btn{padding:.65rem;font-size:.88rem;}
+  .btn{font-size:.7rem;padding:.42rem .7rem;}
 }
 </style>
 </head>
@@ -293,47 +550,110 @@ tr:hover td{background:#f8fafc;}
     <h2>Tool Crib Management</h2>
     <p>ISSUE & RETURN SYSTEM · v5.0</p>
   </div>
-  <!-- Step 1: Select user -->
-  <div class="user-select-wrap" id="login-step1">
-    <h3>Select your account</h3>
-    <div class="user-grid" id="user-grid-list"></div>
+
+  <!-- LOGIN TABS -->
+  <div style="width:100%;max-width:500px;padding:0 1.2rem;">
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-staff" onclick="switchLoginTab('staff')">👥 Staff Login</button>
+      <button class="login-tab" id="tab-employee" onclick="switchLoginTab('employee')">👷 Employee Login</button>
+    </div>
   </div>
-  <!-- Step 2: Enter PIN -->
-  <div class="pin-entry-wrap" id="login-step2" style="display:none">
-    <div class="pin-entry-user">
-      <div class="peu-avatar" id="peu-avatar">👤</div>
-      <div class="peu-name" id="peu-name">—</div>
-      <div class="peu-sub">Enter your 4-digit PIN</div>
+
+  <!-- STAFF LOGIN -->
+  <div id="staff-login-section">
+    <!-- Step 1: Select user -->
+    <div class="user-select-wrap" id="login-step1">
+      <h3>Select your account</h3>
+      <div class="user-grid" id="user-grid-list"></div>
     </div>
-    <div class="pin-box">
-      <div class="pin-dots">
-        <div class="pin-dot" id="pd0"></div>
-        <div class="pin-dot" id="pd1"></div>
-        <div class="pin-dot" id="pd2"></div>
-        <div class="pin-dot" id="pd3"></div>
+    <!-- Step 2: Enter PIN -->
+    <div class="pin-entry-wrap" id="login-step2" style="display:none">
+      <div class="pin-entry-user">
+        <div class="peu-avatar" id="peu-avatar">👤</div>
+        <div class="peu-name" id="peu-name">—</div>
+        <div class="peu-sub">Enter your 4-digit PIN</div>
       </div>
-      <div class="pin-grid">
-        <button class="pin-btn" onclick="pinPress('1')">1</button>
-        <button class="pin-btn" onclick="pinPress('2')">2</button>
-        <button class="pin-btn" onclick="pinPress('3')">3</button>
-        <button class="pin-btn" onclick="pinPress('4')">4</button>
-        <button class="pin-btn" onclick="pinPress('5')">5</button>
-        <button class="pin-btn" onclick="pinPress('6')">6</button>
-        <button class="pin-btn" onclick="pinPress('7')">7</button>
-        <button class="pin-btn" onclick="pinPress('8')">8</button>
-        <button class="pin-btn" onclick="pinPress('9')">9</button>
-        <button class="pin-btn" onclick="pinBackspace()" style="opacity:.7">⌫</button>
-        <button class="pin-btn" onclick="pinPress('0')">0</button>
-        <button class="pin-btn" onclick="pinPress('')" style="opacity:.4">✕</button>
+      <div class="pin-box">
+        <div class="pin-dots">
+          <div class="pin-dot" id="pd0"></div>
+          <div class="pin-dot" id="pd1"></div>
+          <div class="pin-dot" id="pd2"></div>
+          <div class="pin-dot" id="pd3"></div>
+        </div>
+        <div class="pin-grid">
+          <button class="pin-btn" onclick="pinPress('1')">1</button>
+          <button class="pin-btn" onclick="pinPress('2')">2</button>
+          <button class="pin-btn" onclick="pinPress('3')">3</button>
+          <button class="pin-btn" onclick="pinPress('4')">4</button>
+          <button class="pin-btn" onclick="pinPress('5')">5</button>
+          <button class="pin-btn" onclick="pinPress('6')">6</button>
+          <button class="pin-btn" onclick="pinPress('7')">7</button>
+          <button class="pin-btn" onclick="pinPress('8')">8</button>
+          <button class="pin-btn" onclick="pinPress('9')">9</button>
+          <button class="pin-btn" onclick="pinBackspace()" style="opacity:.7">⌫</button>
+          <button class="pin-btn" onclick="pinPress('0')">0</button>
+          <button class="pin-btn" onclick="pinPress('')" style="opacity:.4">✕</button>
+        </div>
+        <div class="pin-error" id="pin-error"></div>
       </div>
-      <div class="pin-error" id="pin-error"></div>
+      <span class="pin-back-link" onclick="goLoginStep1()">← Back to user list</span>
     </div>
-    <span class="pin-back-link" onclick="goLoginStep1()">← Back to user list</span>
+  </div>
+
+  <!-- EMPLOYEE LOGIN -->
+  <div id="employee-login-section" style="display:none">
+    <!-- Step 1: Enter Employee ID -->
+    <div class="emp-login-wrap" id="emp-step1">
+      <div class="emp-id-box">
+        <h4>👷 Enter your Employee ID</h4>
+        <input type="text" class="emp-id-input" id="emp-login-id" placeholder="Employee ID (e.g. EMP-001)"
+          autocomplete="off" onkeydown="if(event.key==='Enter')empCheckId()">
+        <button class="emp-id-btn" onclick="empCheckId()">Next →</button>
+        <div class="pin-error" id="emp-id-error" style="margin-top:.5rem"></div>
+      </div>
+    </div>
+    <!-- Step 2: PIN entry (create or enter) -->
+    <div class="pin-entry-wrap" id="emp-step2" style="display:none">
+      <div class="pin-entry-user">
+        <div class="peu-avatar" id="emp-peu-avatar">👷</div>
+        <div class="peu-name" id="emp-peu-name">—</div>
+        <div class="emp-create-pin" id="emp-pin-subtitle">Enter your 4-digit PIN</div>
+      </div>
+      <div class="pin-box">
+        <div class="pin-dots">
+          <div class="pin-dot" id="epd0"></div>
+          <div class="pin-dot" id="epd1"></div>
+          <div class="pin-dot" id="epd2"></div>
+          <div class="pin-dot" id="epd3"></div>
+        </div>
+        <div class="pin-grid">
+          <button class="pin-btn" onclick="empPinPress('1')">1</button>
+          <button class="pin-btn" onclick="empPinPress('2')">2</button>
+          <button class="pin-btn" onclick="empPinPress('3')">3</button>
+          <button class="pin-btn" onclick="empPinPress('4')">4</button>
+          <button class="pin-btn" onclick="empPinPress('5')">5</button>
+          <button class="pin-btn" onclick="empPinPress('6')">6</button>
+          <button class="pin-btn" onclick="empPinPress('7')">7</button>
+          <button class="pin-btn" onclick="empPinPress('8')">8</button>
+          <button class="pin-btn" onclick="empPinPress('9')">9</button>
+          <button class="pin-btn" onclick="empPinBackspace()" style="opacity:.7">⌫</button>
+          <button class="pin-btn" onclick="empPinPress('0')">0</button>
+          <button class="pin-btn" onclick="empPinPress('')" style="opacity:.4">✕</button>
+        </div>
+        <div class="pin-error" id="emp-pin-error"></div>
+      </div>
+      <span class="pin-back-link" onclick="goEmpStep1()">← Back</span>
+    </div>
   </div>
 </div>
 
 <button class="hamburger" onclick="toggleSidebar()">☰</button>
+<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+  <span class="tt-icon" id="theme-icon">🌙</span>
+  <span id="theme-label">Dark</span>
+</button>
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
 
 <div class="shell">
 <!-- SIDEBAR -->
@@ -349,7 +669,7 @@ tr:hover td{background:#f8fafc;}
     <div class="lb-info">
       <div class="lb-avatar" id="lb-avatar">👤</div>
       <div>
-        <div class="lb-name" id="lb-name">—</div>
+        <div class="lb-name" id="lb-name">—<span class="role-badge" id="lb-role-badge"></span></div>
         <div class="lb-time" id="lb-time"></div>
       </div>
     </div>
@@ -369,7 +689,7 @@ tr:hover td{background:#f8fafc;}
   <div class="nav-item" onclick="goPage('employee',this)"><span class="ni">👷</span> Employee History</div>
   <div class="nav-item" onclick="goPage('audit',this)"><span class="ni">📜</span> Audit Log</div>
   <div class="nav-sec">Setup</div>
-  <div class="nav-item" onclick="goPage('settings',this)"><span class="ni">⚙️</span> Settings & Upload</div>
+  <div class="nav-item" onclick="if(!canAccessSettings())return;goPage('settings',this)"><span class="ni">⚙️</span> Settings & Upload</div>
 </nav>
 
 <!-- MAIN -->
@@ -384,6 +704,9 @@ tr:hover td{background:#f8fafc;}
       <button class="btn btn-warning" onclick="downloadExcel()">⬇️ Excel</button>
       <button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
     </div>
+  </div>
+  <div class="viewer-banner" id="viewer-banner">
+    👁️ You are in <b>Viewer mode</b> — Employee History access only.
   </div>
   <div class="stats-row">
     <div class="stat-card"><div class="sc-icon" style="background:#e8f0fb">📤</div><div><div class="sc-num" id="stat-today" style="color:var(--primary)">0</div><div class="sc-label">Issued Today</div></div></div>
@@ -410,7 +733,7 @@ tr:hover td{background:#f8fafc;}
 
 <!-- ISSUE TOOL -->
 <div class="page" id="page-issue">
-  <div class="pg-hdr"><div><div class="pg-title">📤 Issue Tool</div><div class="pg-sub">Issue a tool to an employee</div></div></div>
+  <div class="pg-hdr"><div><div class="pg-title">📤 Issue Tool</div><div class="pg-sub">Issue one or more tools to an employee</div></div></div>
   <div class="form-card">
     <h3>🧑‍🔧 Employee Details</h3>
     <div class="form-grid">
@@ -426,24 +749,14 @@ tr:hover td{background:#f8fafc;}
         <label>Employee ID <span class="auto-badge fill-badge">AUTO FILL</span></label>
         <input id="i-empid" type="text" placeholder="Auto-filled on name select" readonly>
       </div>
-    </div>
-    <h3>🔧 Tool Details</h3>
-    <div class="form-grid">
-      <div class="field ac-wrap">
-        <label>Tool Name *</label>
-        <input id="i-toolname" type="text" placeholder="Type to search tool..." autocomplete="off"
-          oninput="showToolSuggestions(this,'ac-toolname')"
-          onkeydown="acKeyNav(event,'ac-toolname','tool')"
-          onblur="setTimeout(()=>hideAC('ac-toolname'),200)">
-        <div class="ac-dropdown" id="ac-toolname"></div>
+      <div class="field">
+        <label>Book No <span class="auto-badge">LAST USED</span></label>
+        <input id="i-bookno" type="text" placeholder="e.g. BK-001" autocomplete="off">
       </div>
       <div class="field">
-        <label>Tool Code <span class="auto-badge fill-badge">AUTO FILL</span></label>
-        <input id="i-toolcode" type="text" placeholder="Auto-filled on tool select" readonly>
+        <label>Page No <span class="auto-badge">LAST USED</span></label>
+        <input id="i-pageno" type="text" placeholder="e.g. 42" autocomplete="off">
       </div>
-      <div class="field"><label>Book No *</label><input id="i-bookno" type="text" placeholder="e.g. BK-001" autocomplete="off"></div>
-      <div class="field"><label>Page No *</label><input id="i-pageno" type="text" placeholder="e.g. 42" autocomplete="off"></div>
-      <div class="field"><label>Quantity *</label><input id="i-qty" type="number" min="1" placeholder="1" value="1"></div>
       <div class="field">
         <label>Shift *</label>
         <select id="i-shift">
@@ -454,10 +767,16 @@ tr:hover td{background:#f8fafc;}
       </div>
       <div class="field"><label>Issue Date <span class="auto-badge">AUTO</span></label><input id="i-date" type="text" readonly></div>
       <div class="field"><label>Issue Time <span class="auto-badge">AUTO</span></label><input id="i-time" type="text" readonly></div>
-      <div class="field" style="grid-column:1/-1"><label>Remarks</label><textarea id="i-remarks" placeholder="Any notes about this issue..."></textarea></div>
     </div>
+
+    <h3>🔧 Tools to Issue</h3>
+    <div id="tool-rows-container"></div>
+    <button class="btn btn-outline" onclick="addToolRow()" style="margin-bottom:1rem;">➕ Add Another Tool</button>
+
+    <div class="field" style="margin-bottom:1.2rem"><label>Remarks</label><textarea id="i-remarks" placeholder="Any notes about this issue..."></textarea></div>
+
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="issueToolSave()">📤 Issue Tool & Save</button>
+      <button class="btn btn-primary" onclick="issueToolSave()">📤 Issue All Tools</button>
       <button class="btn btn-outline" onclick="clearIssueForm()">🔄 Clear</button>
     </div>
   </div>
@@ -551,7 +870,7 @@ tr:hover td{background:#f8fafc;}
   <div class="table-card">
     <div class="table-toolbar">
       <h3>🔴 Overdue List</h3>
-      <div class="search-box"><span>🔍</span><input id="overdue-search" type="text" placeholder="Search..." oninput="renderOverdue()"></div>
+      <div class="search-box"><span>🔍</span><input id="overdue-search" type="text" placeholder="Search employee, tool..." oninput="renderOverdue()"></div>
     </div>
     <div class="tbl-wrap">
       <table>
@@ -625,14 +944,22 @@ tr:hover td{background:#f8fafc;}
 
 <!-- EMPLOYEE HISTORY -->
 <div class="page" id="page-employee">
-  <div class="pg-hdr"><div><div class="pg-title">👷 Employee History</div></div></div>
-  <div class="form-card" style="padding:1rem 1.5rem">
-    <div class="filter-row">
-      <div class="field" style="flex:1;max-width:300px">
-        <label>Search Employee</label>
-        <input id="emp-search" type="text" placeholder="Enter name or ID..." oninput="renderEmpHistory()">
-      </div>
+  <div class="pg-hdr">
+    <div><div class="pg-title">👷 Employee History</div><div class="pg-sub" id="emp-page-sub">Search by employee name, ID or tool</div></div>
+    <div class="btn-row" id="emp-action-btns" style="display:none">
+      <button class="btn btn-warning" id="emp-download-btn" onclick="downloadEmpExcel()">⬇️ Download My Records</button>
+      <button class="btn btn-danger" onclick="logoutUser()">🔒 Logout</button>
     </div>
+  </div>
+  <div id="emp-search-bar" class="form-card" style="padding:.8rem 1.2rem;margin-bottom:1rem;display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;">
+    <div class="search-box" style="flex:1;min-width:200px;max-width:360px;">
+      <span>🔍</span>
+      <input id="emp-search-input" type="text" placeholder="Search employee, tool, ID..." oninput="renderEmpHistory()">
+    </div>
+    <input type="date" id="emp-date-from" onchange="renderEmpHistory()" style="padding:.42rem .65rem;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;background:var(--bg);color:var(--text);outline:none;" title="From Date">
+    <input type="date" id="emp-date-to" onchange="renderEmpHistory()" style="padding:.42rem .65rem;border:1.5px solid var(--border);border-radius:8px;font-size:.78rem;background:var(--bg);color:var(--text);outline:none;" title="To Date">
+    <button onclick="clearEmpSearch()" style="padding:.42rem .7rem;border:1.5px solid var(--border);border-radius:7px;font-size:.73rem;font-weight:700;cursor:pointer;color:var(--text2);background:var(--white);font-family:'Plus Jakarta Sans',sans-serif;">✕ Clear</button>
+    <span id="emp-result-count" style="font-size:.72rem;color:var(--text2);font-family:'JetBrains Mono',monospace;"></span>
   </div>
   <div class="table-card">
     <div class="table-toolbar"><h3>📋 Employee Tool History</h3></div>
@@ -664,7 +991,7 @@ tr:hover td{background:#f8fafc;}
         <option value="delete">🗑️ Delete</option>
         <option value="login">🔓 Login</option>
         <option value="lock">🔒 Logout</option>
-        <option value="backup">💾 Backup</option>
+        <option value="backup">💾 Backup / Download</option>
         <option value="restore">📂 Restore</option>
       </select>
     </div>
@@ -690,6 +1017,11 @@ tr:hover td{background:#f8fafc;}
       <div class="add-user-form">
         <input id="new-username" type="text" placeholder="Name (e.g. Ravi)" maxlength="20">
         <input id="new-userpin" type="password" placeholder="4-digit PIN" maxlength="4">
+        <select id="new-userrole" style="padding:.45rem .6rem;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;outline:none;font-family:'Plus Jakarta Sans',sans-serif;grid-column:1/-1">
+          <option value="issuer">🔧 Issuer (Issue + Return)</option>
+          <option value="admin">⭐ Admin (Full Access)</option>
+          <option value="viewer">👁️ Viewer (Read Only)</option>
+        </select>
         <label style="display:flex;align-items:center;gap:.4rem;font-size:.78rem;font-weight:600;cursor:pointer;grid-column:1/-1">
           <input type="checkbox" id="new-useradmin"> ⭐ Mark as Admin (can clear audit log)
         </label>
@@ -749,6 +1081,25 @@ tr:hover td{background:#f8fafc;}
         <button class="btn btn-primary" onclick="addToolManual()" style="padding:.5rem .9rem">➕ Add</button>
       </div>
       <div class="master-list" id="tool-master-list"></div>
+    </div>
+
+    <!-- SAP IMPORT -->
+    <div class="settings-card" style="grid-column:1/-1">
+      <h3>🏭 SAP Data Import</h3>
+      <p>Upload SAP exported Excel file here. Records will be automatically imported into Master Data.<br>
+      <span style="font-size:.7rem;color:var(--text2)">
+        Expected columns: <b>MaterialDocument, Posting date, Vendor No, Vendor Name, Sub Vendor Name, Material Code, Material Text, Movement Type, Quantity, Reference, Remarks</b>
+      </span></p>
+      <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;font-size:.75rem;color:#92400e;">
+        ⚠️ <b>Movement Type:</b> 311 = Issue &nbsp;|&nbsp; 312 = Return &nbsp;|&nbsp; Duplicate records will be skipped (based on MaterialDocument)
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('sap-upload').click()">
+        <input type="file" id="sap-upload" accept=".xlsx,.xls,.csv" onchange="uploadSAP(this)">
+        <div class="uz-icon">🏭</div>
+        <p>Click to upload SAP Excel / CSV</p>
+        <p class="uz-hint">311 → Issue &nbsp;|&nbsp; 312 → Return</p>
+      </div>
+      <div id="sap-import-result" style="margin-top:.75rem;display:none"></div>
     </div>
 
   </div>
@@ -910,7 +1261,185 @@ function showConfirm(title, msg, cb){
 function closeConfirm(){ document.getElementById('confirm-modal').classList.remove('show'); confirmCallback=null; }
 document.getElementById('confirm-ok').onclick=()=>{ if(confirmCallback)confirmCallback(); closeConfirm(); };
 
-// ===== MULTI-USER LOGIN =====
+// ===== EMPLOYEE SELF LOGIN =====
+let empPinBuffer = '';
+let empLoginTarget = null;
+
+function switchLoginTab(tab){
+  document.getElementById('tab-staff').classList.toggle('active', tab==='staff');
+  document.getElementById('tab-employee').classList.toggle('active', tab==='employee');
+  document.getElementById('staff-login-section').style.display = tab==='staff' ? '' : 'none';
+  document.getElementById('employee-login-section').style.display = tab==='employee' ? '' : 'none';
+  if(tab==='employee'){
+    document.getElementById('emp-login-id').value='';
+    document.getElementById('emp-id-error').textContent='';
+    goEmpStep1();
+  }
+}
+
+function empCheckId(){
+  const id = document.getElementById('emp-login-id').value.trim().toUpperCase();
+  if(!id){ document.getElementById('emp-id-error').textContent='Please enter your Employee ID!'; return; }
+  const emp = empMaster.find(e=>e.id.toUpperCase()===id || e.id===document.getElementById('emp-login-id').value.trim());
+  if(!emp){ document.getElementById('emp-id-error').textContent='❌ Employee ID not found. Please check with Admin.'; return; }
+  const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
+  const hasPin = !!empPins[emp.id];
+  empLoginTarget = { id: emp.id, name: emp.name, isNewPin: !hasPin, confirmPin: null };
+  document.getElementById('emp-peu-avatar').textContent='👷';
+  document.getElementById('emp-peu-name').textContent = emp.name;
+  document.getElementById('emp-pin-subtitle').textContent = hasPin
+    ? 'Enter your 4-digit PIN'
+    : '🆕 Create a new 4-digit PIN';
+  document.getElementById('emp-pin-error').textContent='';
+  empPinBuffer=''; updateEmpPinDots();
+  document.getElementById('emp-step1').style.display='none';
+  document.getElementById('emp-step2').style.display='block';
+}
+
+function goEmpStep1(){
+  empLoginTarget=null; empPinBuffer='';
+  document.getElementById('emp-step1').style.display='block';
+  document.getElementById('emp-step2').style.display='none';
+  updateEmpPinDots();
+}
+
+function empPinPress(n){
+  if(!n) return;
+  if(empPinBuffer.length>=4) return;
+  empPinBuffer+=n; updateEmpPinDots();
+  if(empPinBuffer.length===4) setTimeout(empCheckPin,200);
+}
+function empPinBackspace(){ empPinBuffer=empPinBuffer.slice(0,-1); updateEmpPinDots(); }
+function updateEmpPinDots(){
+  for(let i=0;i<4;i++) document.getElementById('epd'+i).className='pin-dot'+(i<empPinBuffer.length?' filled':'');
+}
+
+function empCheckPin(){
+  if(!empLoginTarget) return;
+  const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
+  if(empLoginTarget.isNewPin){
+    if(!empLoginTarget.confirmPin){
+      empLoginTarget.confirmPin = empPinBuffer;
+      empPinBuffer=''; updateEmpPinDots();
+      document.getElementById('emp-pin-subtitle').textContent='🔁 Confirm your PIN (enter again)';
+      document.getElementById('emp-pin-error').textContent='';
+      return;
+    }
+    if(empPinBuffer !== empLoginTarget.confirmPin){
+      document.getElementById('emp-pin-error').textContent='❌ PINs do not match! Please try again.';
+      empLoginTarget.confirmPin=null; empPinBuffer=''; updateEmpPinDots();
+      document.getElementById('emp-pin-subtitle').textContent='🆕 Create a new 4-digit PIN';
+      return;
+    }
+    empPins[empLoginTarget.id] = empPinBuffer;
+    localStorage.setItem('tc_emp_pins', JSON.stringify(empPins));
+    empLoginSuccess();
+  } else {
+    if(empPinBuffer !== empPins[empLoginTarget.id]){
+      document.getElementById('emp-pin-error').textContent='❌ Wrong PIN. Try again.';
+      empPinBuffer=''; updateEmpPinDots();
+      return;
+    }
+    empLoginSuccess();
+  }
+}
+
+function empLoginSuccess(){
+  currentUser = {
+    name: empLoginTarget.name,
+    avatar: '👷',
+    loginTime: new Date().toLocaleString('en-IN'),
+    role: 'employee',
+    isAdmin: false,
+    empId: empLoginTarget.id
+  };
+  document.getElementById('login-screen').classList.add('hide');
+  updateLoggedBar();
+  applyRoleUI();
+  addAudit('login', `Employee ${empLoginTarget.name} (${empLoginTarget.id}) logged in`);
+  showToast(`Welcome, ${empLoginTarget.name}! 👋`);
+}
+
+// ===== ROLE-BASED ACCESS =====
+function getRole(){ return currentUser?.role || 'issuer'; }
+function isAdmin(){ return getRole()==='admin' || currentUser?.isAdmin===true; }
+function isIssuer(){ return getRole()==='issuer' || getRole()==='admin' || currentUser?.isAdmin===true; }
+function isEmployee(){ return getRole()==='employee'; }
+
+function applyRoleUI(){
+  const role = getRole();
+  const viewer = role === 'viewer';
+  const employee = role === 'employee';
+
+  // Viewer banner
+  const vb = document.getElementById('viewer-banner');
+  if(vb) vb.classList.toggle('show', viewer || employee);
+
+  // Role badge in sidebar
+  const badge = document.getElementById('lb-role-badge');
+  if(badge){
+    const map = {admin:'⭐ Admin', issuer:'🔧 Issuer', viewer:'👁️ Viewer', employee:'👷 Employee'};
+    const cls  = {admin:'role-admin', issuer:'role-issuer', viewer:'role-viewer', employee:'role-issuer'};
+    badge.textContent = map[role]||role;
+    badge.className   = 'role-badge '+(cls[role]||'');
+  }
+
+  if(employee || viewer){
+    // Hide all nav items except Employee History
+    document.querySelectorAll('.nav-item').forEach(el=>{
+      el.style.display = el.textContent.trim().includes('Employee History') ? '' : 'none';
+    });
+    document.querySelectorAll('.nav-sec').forEach(el=>el.style.display='none');
+
+    // Update banner text
+    const vb2 = document.getElementById('viewer-banner');
+    if(vb2) vb2.innerHTML = employee
+      ? `👷 Welcome <b>${currentUser.name}</b> — Showing your tool history only.`
+      : `👁️ You are in <b>Viewer mode</b> — Employee History access only.`;
+
+    // Update page subtitle
+    const sub = document.getElementById('emp-page-sub');
+    if(sub) sub.textContent = employee
+      ? `${currentUser.name} (${currentUser.empId}) — Your Records`
+      : 'Use the search bar above to filter';
+
+    // Navigate via goPage — handles page switch + search bar + render
+    goPage('employee');
+
+  } else {
+    // Admin / Issuer — restore all nav items
+    document.querySelectorAll('.nav-item').forEach(el=>el.style.display='');
+    document.querySelectorAll('.nav-sec').forEach(el=>el.style.display='');
+
+    // Hide employee action buttons
+    const actionBtns = document.getElementById('emp-action-btns');
+    if(actionBtns) actionBtns.style.display='none';
+
+    // Reset employee page subtitle
+    const sub = document.getElementById('emp-page-sub');
+    if(sub) sub.textContent='Use the search bar above to filter by employee, tool, date';
+
+    // Go to Dashboard — nav auto-activates
+    goPage('dashboard');
+  }
+}
+
+function canIssue(){
+  if(!isIssuer()){showToast('Access denied! Issuer or Admin role required.','error');return false;}
+  return true;
+}
+function canDelete(){
+  if(!isAdmin()){showToast('Access denied! Admin role required.','error');return false;}
+  return true;
+}
+function canEdit(){
+  if(!isAdmin()){showToast('Access denied! Admin role required.','error');return false;}
+  return true;
+}
+function canAccessSettings(){
+  if(!isAdmin()){showToast('Access denied! Admin role required.','error');return false;}
+  return true;
+}
 const AVATARS = ['👷','🧑‍🔧','👨‍💼','👩‍💼','🧑‍💻','👨‍🔬','👩‍🔧','🧑‍🏭'];
 
 function renderUserGrid(){
@@ -966,11 +1495,18 @@ function checkPin(){
     const now = new Date().toLocaleString('en-IN');
     appUsers[pinTargetUser.idx].lastLogin = nowTimeStr()+' '+nowDateStr();
     saveUsers();
-    currentUser = { name: pinTargetUser.name, avatar: pinTargetUser.avatar||AVATARS[pinTargetUser.idx%AVATARS.length], loginTime: now };
+    const userRole = pinTargetUser.role || (pinTargetUser.isAdmin ? 'admin' : 'issuer');
+    currentUser = { 
+      name: pinTargetUser.name, 
+      avatar: pinTargetUser.avatar||AVATARS[pinTargetUser.idx%AVATARS.length], 
+      loginTime: now, 
+      role: userRole,
+      isAdmin: userRole === 'admin' || pinTargetUser.isAdmin === true
+    };
     document.getElementById('login-screen').classList.add('hide');
     updateLoggedBar();
-    addAudit('login', `${currentUser.name} logged in`);
-    updateDashboard(); renderRecent(); renderSettings();
+    applyRoleUI();
+    addAudit('login', `${currentUser.name} logged in as ${currentUser.role||'issuer'}`);
     showToast(`Welcome, ${currentUser.name}! 👋`);
     goLoginStep1();
   } else {
@@ -987,9 +1523,37 @@ function updateLoggedBar(){
 }
 
 function logoutUser(){
-  if(currentUser) addAudit('lock', `${currentUser.name} logged out`);
-  currentUser = null; pinBuffer = '';
+  if(currentUser){
+    const isEmp = getRole()==='employee';
+    addAudit('lock', isEmp
+      ? `Employee ${currentUser.name} (${currentUser.empId}) logged out`
+      : `${currentUser.name} logged out`);
+  }
+  currentUser = null; pinBuffer = ''; empPinBuffer = ''; empLoginTarget = null;
+
+  // Reset employee page UI
+  const actionBtns = document.getElementById('emp-action-btns');
+  if(actionBtns) actionBtns.style.display='none';
+  const dlBtn = document.getElementById('emp-download-btn');
+  if(dlBtn) dlBtn.style.display='none';
+  const hdr = document.getElementById('emp-self-hdr');
+  if(hdr) hdr.remove();
+
+  // Restore all nav items (in case viewer/employee hid them)
+  document.querySelectorAll('.nav-item').forEach(el=>el.style.display='');
+  document.querySelectorAll('.nav-sec').forEach(el=>el.style.display='');
+
+  // Reset viewer banner
+  const vb = document.getElementById('viewer-banner');
+  if(vb) vb.classList.remove('show');
+
+  // Reset employee history subtitle
+  const sub = document.getElementById('emp-page-sub');
+  if(sub) sub.textContent='Use the search bar above to filter by employee, tool, date';
+
+  // Show login screen — reset to Staff tab
   document.getElementById('login-screen').classList.remove('hide');
+  switchLoginTab('staff');
   goLoginStep1();
   renderUserGrid();
 }
@@ -997,28 +1561,59 @@ function logoutUser(){
 // Init users — if no users, create a default one
 function initUsers(){
   if(!appUsers.length){
-    appUsers = [{ name:'Admin', pin:'1234', avatar:'👷', isAdmin:true }];
+    appUsers = [{ name:'Admin', pin:'1234', avatar:'👷', isAdmin:true, role:'admin' }];
     saveUsers();
   }
   renderUserGrid();
 }
 
 // ===== NAV =====
+// Helper to find nav item by page id
+function findNavItem(id){
+  const all = document.querySelectorAll('.nav-item');
+  for(const el of all){
+    const oc = el.getAttribute('onclick')||'';
+    if(oc.includes(`'${id}'`) || oc.includes(`"${id}"`)) return el;
+  }
+  return null;
+}
+
 function goPage(id, el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if(el) el.classList.add('active');
+  const page = document.getElementById('page-'+id);
+  if(!page) return;
+  page.classList.add('active');
+  // Activate nav item
+  const navEl = el || findNavItem(id);
+  if(navEl) navEl.classList.add('active');
   if(id==='charts') setTimeout(renderCharts,100);
   if(id==='toolsummary') renderToolSummary();
   if(id==='shift') renderShiftReport();
   if(id==='audit') renderAuditLog();
   if(id==='overdue'){ document.getElementById('overdue-hours').value=overdueHrs; renderOverdue(); }
   if(id==='master') renderMaster();
-  if(id==='issue'){ startClock(); renderIssued(); }
+  if(id==='issue'){
+    startClock(); renderIssued();
+    // Restore last used book/page
+    const lb=localStorage.getItem('tc_last_bookno')||'';
+    const lp=localStorage.getItem('tc_last_pageno')||'';
+    const bEl=document.getElementById('i-bookno');
+    const pEl=document.getElementById('i-pageno');
+    if(bEl&&!bEl.value) bEl.value=lb;
+    if(pEl&&!pEl.value) pEl.value=lp;
+  }
   if(id==='return') renderPendingReturn();
-  if(id==='employee') {}
+  if(id==='employee'){
+    renderEmpHistory();
+    const _role=getRole();
+    const _ab=document.getElementById('emp-action-btns');
+    if(_ab) _ab.style.display=(_role==='employee'||_role==='viewer')?'':'none';
+    const _dl=document.getElementById('emp-download-btn');
+    if(_dl) _dl.style.display=_role==='employee'?'':'none';
+  }
   if(id==='settings') renderSettings();
+  if(id==='dashboard'){ updateDashboard(); renderRecent(); startClock(); }
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('overlay').classList.remove('show');
 }
@@ -1141,34 +1736,158 @@ function shiftBadge(s){
 }
 
 // ===== ISSUE =====
+// ===== MULTI-TOOL ISSUE =====
+let toolRowCount = 0;
+
+function addToolRow(){
+  toolRowCount++;
+  const id = toolRowCount;
+  const container = document.getElementById('tool-rows-container');
+  const div = document.createElement('div');
+  div.className = 'tool-row';
+  div.id = `tool-row-${id}`;
+  div.innerHTML = `
+    <div class="tool-row-header">
+      <span class="tool-row-num">Tool #${id}</span>
+      ${id > 1 ? `<button class="tool-row-del" onclick="removeToolRow(${id})">✕ Remove</button>` : '<span></span>'}
+    </div>
+    <div class="tool-row-grid">
+      <div class="field ac-wrap">
+        <label>Tool Name *</label>
+        <input id="tr-name-${id}" type="text" placeholder="Type to search tool..." autocomplete="off"
+          oninput="showToolSuggestionsRow(this,'tr-ac-${id}',${id})"
+          onkeydown="acKeyNavRow(event,'tr-ac-${id}',${id})"
+          onblur="setTimeout(()=>hideAC('tr-ac-${id}'),200)">
+        <div class="ac-dropdown" id="tr-ac-${id}"></div>
+      </div>
+      <div class="field">
+        <label>Tool Code <span class="auto-badge fill-badge">AUTO</span></label>
+        <input id="tr-code-${id}" type="text" placeholder="Auto-filled" readonly>
+      </div>
+      <div class="field">
+        <label>Qty</label>
+        <input id="tr-qty-${id}" type="number" min="1" value="1" style="width:70px;">
+      </div>
+    </div>`;
+  container.appendChild(div);
+}
+
+function removeToolRow(id){
+  const row = document.getElementById(`tool-row-${id}`);
+  if(row) row.remove();
+}
+
+function showToolSuggestionsRow(input, ddId, rowId){
+  const q = input.value.toLowerCase();
+  const dd = document.getElementById(ddId);
+  if(!q){dd.classList.remove('show');return;}
+  const matches = toolMaster.filter(t=>t.name.toLowerCase().includes(q)||(t.code||'').toLowerCase().includes(q)).slice(0,8);
+  if(!matches.length){dd.classList.remove('show');return;}
+  dd.innerHTML = matches.map(t=>`
+    <div class="ac-item" onmousedown="selectToolRow(${rowId},'${t.name.replace(/'/g,"\\'")}','${(t.code||'').replace(/'/g,"\\'")}')">
+      <span>${highlight(t.name,q)}</span>
+      ${t.code?`<span class="ac-code">${t.code}</span>`:''}
+    </div>`).join('');
+  dd.classList.add('show');
+}
+
+function selectToolRow(rowId, name, code){
+  const nameEl = document.getElementById(`tr-name-${rowId}`);
+  const codeEl = document.getElementById(`tr-code-${rowId}`);
+  if(nameEl) nameEl.value = name;
+  if(codeEl) codeEl.value = code;
+  hideAC(`tr-ac-${rowId}`);
+}
+
+function acKeyNavRow(e, ddId, rowId){
+  const dd = document.getElementById(ddId);
+  if(!dd) return;
+  const items = dd.querySelectorAll('.ac-item');
+  let cur = Array.from(items).findIndex(i=>i.classList.contains('ac-active'));
+  if(e.key==='ArrowDown'){e.preventDefault();cur=Math.min(cur+1,items.length-1);}
+  else if(e.key==='ArrowUp'){e.preventDefault();cur=Math.max(cur-1,0);}
+  else if(e.key==='Enter'&&cur>=0){e.preventDefault();items[cur].dispatchEvent(new MouseEvent('mousedown'));return;}
+  else if(e.key==='Escape'){hideAC(ddId);return;}
+  items.forEach((i,idx)=>i.classList.toggle('ac-active',idx===cur));
+}
+
+function getToolRows(){
+  const rows = document.querySelectorAll('.tool-row');
+  const tools = [];
+  rows.forEach(row=>{
+    const id = row.id.replace('tool-row-','');
+    const name = (document.getElementById(`tr-name-${id}`)?.value||'').trim();
+    const code = (document.getElementById(`tr-code-${id}`)?.value||'').trim();
+    const qty  = document.getElementById(`tr-qty-${id}`)?.value||'1';
+    if(name) tools.push({name, code, qty});
+  });
+  return tools;
+}
+
 function issueToolSave(){
-  const empName=document.getElementById('i-empname').value.trim();
-  const empId=document.getElementById('i-empid').value.trim();
-  const toolName=document.getElementById('i-toolname').value.trim();
-  const toolCode=document.getElementById('i-toolcode').value.trim();
-  const bookNo=document.getElementById('i-bookno').value.trim();
-  const pageNo=document.getElementById('i-pageno').value.trim();
-  const qty=document.getElementById('i-qty').value||'1';
-  const shift=document.getElementById('i-shift').value;
-  const remarks=document.getElementById('i-remarks').value.trim();
-  const issueDate=document.getElementById('i-date').value;
-  const issueTime=document.getElementById('i-time').value;
-  if(!empName||!empId||!toolName||!bookNo||!pageNo){showToast('Please fill all required fields!','error');return;}
-  const rec={ empName,empId,toolName,toolCode,bookNo,pageNo,qty,shift,remarks,
-    issueDate,issueTime,issueDateISO:todayISO(),
-    status:'Issued',returnDate:'',returnTime:'',returnDateISO:'',condition:'',returnRemarks:'' };
-  records.push(rec);
-  saveData(); clearIssueForm(); renderIssued(); updateDashboard(); renderRecent();
-  addAudit('issue',`"${toolName}" issued to ${empName} (${empId}) — ${shift} shift`);
-  showToast(`"${toolName}" issued to ${empName}!`);
-  // Auto open slip
-  openSlipModal(records.length-1);
+  if(!canIssue()) return;
+  const empName = document.getElementById('i-empname').value.trim();
+  const empId   = document.getElementById('i-empid').value.trim();
+  const bookNo  = document.getElementById('i-bookno').value.trim();
+  const pageNo  = document.getElementById('i-pageno').value.trim();
+  const shift   = document.getElementById('i-shift').value;
+  const remarks = document.getElementById('i-remarks').value.trim();
+  const issueDate = document.getElementById('i-date').value;
+  const issueTime = document.getElementById('i-time').value;
+
+  if(!empName||!empId){showToast('Please enter employee details!','error');return;}
+  if(!bookNo||!pageNo){showToast('Please enter Book No and Page No!','error');return;}
+
+  const tools = getToolRows();
+  if(!tools.length){showToast('Please add at least one tool!','error');return;}
+  const emptyTool = tools.find(t=>!t.name);
+  if(emptyTool){showToast('Please fill all tool names!','error');return;}
+
+  // Save last used book/page
+  localStorage.setItem('tc_last_bookno', bookNo);
+  localStorage.setItem('tc_last_pageno', pageNo);
+
+  // Save all records
+  const newIdxs = [];
+  tools.forEach(t=>{
+    const rec = {
+      empName, empId,
+      toolName: t.name, toolCode: t.code,
+      bookNo, pageNo, qty: t.qty, shift, remarks,
+      issueDate, issueTime, issueDateISO: todayISO(),
+      status:'Issued', returnDate:'', returnTime:'',
+      returnDateISO:'', condition:'', returnRemarks:''
+    };
+    records.push(rec);
+    newIdxs.push(records.length-1);
+    addAudit('issue',`"${t.name}" issued to ${empName} (${empId}) — ${shift} shift`);
+  });
+
+  saveData();
+  clearIssueForm();
+  renderIssued();
+  updateDashboard();
+  renderRecent();
+  showToast(`${tools.length} tool${tools.length>1?'s':''} issued to ${empName}!`);
+
+  // Open multi-tool slip
+  openMultiSlipModal(newIdxs);
 }
 
 function clearIssueForm(){
-  ['i-empname','i-empid','i-toolname','i-toolcode','i-bookno','i-pageno','i-remarks'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('i-qty').value='1';
-  hideAC('ac-empname'); hideAC('ac-toolname');
+  document.getElementById('i-empname').value='';
+  document.getElementById('i-empid').value='';
+  document.getElementById('i-remarks').value='';
+  hideAC('ac-empname');
+  // Restore last used book/page
+  const lastBook = localStorage.getItem('tc_last_bookno')||'';
+  const lastPage = localStorage.getItem('tc_last_pageno')||'';
+  document.getElementById('i-bookno').value = lastBook;
+  document.getElementById('i-pageno').value = lastPage;
+  // Reset tool rows — keep 1 empty row
+  toolRowCount = 0;
+  document.getElementById('tool-rows-container').innerHTML='';
+  addToolRow();
 }
 
 function renderIssued(){
@@ -1240,6 +1959,7 @@ function openReturnModal(idx){
 function closeReturnModal(){ document.getElementById('return-modal').classList.remove('show'); }
 
 function confirmReturn(){
+  if(!canIssue()) return;
   const idx=parseInt(document.getElementById('rm-idx').value);
   const cond=document.getElementById('rm-condition').value;
   if(!cond){showToast('Please select tool condition!','error');return;}
@@ -1287,10 +2007,10 @@ function renderMaster(){
       <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
       <td><b>${r.empName}</b></td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
-      <td>${r.toolName}</td>
+      <td>${r.toolName}${r.sapImport?'<span class="auto-badge" style="background:#f0fdf4;color:#166534;margin-left:.3rem">SAP</span>':''}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo||'—'}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
       <td>${shiftBadge(r.shift)}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate}</td>
@@ -1312,10 +2032,21 @@ function renderMaster(){
 // ===== OVERDUE =====
 function renderOverdue(){
   const q=(document.getElementById('overdue-search')?.value||'').toLowerCase();
+  const from=''; const to='';
   const tbody=document.getElementById('overdue-tbody');
   let ov=records.map((r,i)=>({...r,idx:i})).filter(r=>isOverdue(r));
-  if(q) ov=ov.filter(r=>r.empName.toLowerCase().includes(q)||r.toolName.toLowerCase().includes(q));
-  if(!ov.length){tbody.innerHTML='<tr class="empty-row"><td colspan="11">🎉 No overdue tools!</td></tr>';return;}
+  const total = ov.length;
+  if(q) ov=ov.filter(r=>
+    r.empName.toLowerCase().includes(q)||
+    r.empId.toLowerCase().includes(q)||
+    r.toolName.toLowerCase().includes(q)||
+    (r.toolCode||'').toLowerCase().includes(q)||
+    (r.bookNo||'').toLowerCase().includes(q)||
+    (r.remarks||'').toLowerCase().includes(q)
+  );
+  if(from) ov=ov.filter(r=>r.issueDateISO>=from);
+  if(to) ov=ov.filter(r=>r.issueDateISO<=to);
+  if(!ov.length){tbody.innerHTML='<tr class="empty-row"><td colspan="11">'+(total?'🔍 No results found. Try different search.':'🎉 No overdue tools!')+'</td></tr>';return;}
   tbody.innerHTML=ov.map((r,i)=>`
     <tr style="background:#fff5f5">
       <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
@@ -1355,7 +2086,11 @@ function makeChart(id,type,labels,data,colors){
   const ctx=document.getElementById(id)?.getContext('2d');
   if(!ctx)return;
   if(chartInstances[id]) chartInstances[id].destroy();
-  chartInstances[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:colors.length===1?data.map((_,i)=>`rgba(15,76,129,${0.35+i*0.13})`):colors,borderRadius:type==='bar'?6:0,borderWidth:type==='doughnut'?2:0,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{family:'Plus Jakarta Sans',size:11},padding:10}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,font:{family:'JetBrains Mono',size:10}},grid:{color:'#f1f5f9'}},x:{ticks:{font:{family:'Plus Jakarta Sans',size:10}}}}:{}}});
+  const isDark = document.body.classList.contains('dark');
+  const gridColor = isDark ? '#334155' : '#f1f5f9';
+  const tickColor = isDark ? '#94a3b8' : '#475569';
+  const legendColor = isDark ? '#f1f5f9' : '#0f172a';
+  chartInstances[id]=new Chart(ctx,{type,data:{labels,datasets:[{data,backgroundColor:colors.length===1?data.map((_,i)=>`rgba(29,78,216,${0.35+i*0.13})`):colors,borderRadius:type==='bar'?6:0,borderWidth:type==='doughnut'?2:0,borderColor:isDark?'#1e293b':'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:legendColor,font:{family:'Plus Jakarta Sans',size:11},padding:10}}},scales:type==='bar'?{y:{beginAtZero:true,ticks:{stepSize:1,color:tickColor,font:{family:'JetBrains Mono',size:10}},grid:{color:gridColor}},x:{ticks:{color:tickColor,font:{family:'Plus Jakarta Sans',size:10}},grid:{color:gridColor}}}:{}}});
 }
 
 // ===== TOOL SUMMARY =====
@@ -1450,13 +2185,52 @@ function downloadShiftExcel(){
 
 // ===== EMPLOYEE HISTORY =====
 function renderEmpHistory(){
-  const q=(document.getElementById('emp-search')?.value||'').toLowerCase();
-  const tbody=document.getElementById('emp-tbody');
-  if(!q){tbody.innerHTML='<tr class="empty-row"><td colspan="14">Search an employee to see history.</td></tr>';return;}
-  const f=records.map((r,i)=>({...r,idx:i})).filter(r=>r.empName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q));
-  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="14">No records found.</td></tr>';return;}
+  const tbody = document.getElementById('emp-tbody');
+  const isEmpRole = getRole()==='employee';
+  const searchBar = document.getElementById('emp-search-bar');
+
+  // Hide local search bar for employee role (they see own records auto)
+  if(searchBar) searchBar.style.display = isEmpRole ? 'none' : '';
+
+  let f = records.map((r,i)=>({...r,idx:i}));
+
+  if(isEmpRole && currentUser?.empId){
+    // Employee — show only own records automatically
+    f = f.filter(r=>r.empId===currentUser.empId);
+    renderEmpSelfStats(f);
+    const cnt = document.getElementById('emp-result-count');
+    if(cnt) cnt.textContent='';
+  } else {
+    // Admin/Issuer — use local search inputs
+    const q = (document.getElementById('emp-search-input')?.value||'').toLowerCase().trim();
+    const from = document.getElementById('emp-date-from')?.value||'';
+    const to = document.getElementById('emp-date-to')?.value||'';
+    if(!q && !from && !to){
+      tbody.innerHTML='<tr class="empty-row"><td colspan="14">🔍 Search employee name, ID, or tool name above.</td></tr>';
+      const cnt=document.getElementById('emp-result-count');
+      if(cnt) cnt.textContent='';
+      return;
+    }
+    if(q) f=f.filter(r=>
+      r.empName.toLowerCase().includes(q)||
+      r.empId.toLowerCase().includes(q)||
+      r.toolName.toLowerCase().includes(q)||
+      (r.toolCode||'').toLowerCase().includes(q)||
+      (r.bookNo||'').toLowerCase().includes(q)||
+      (r.remarks||'').toLowerCase().includes(q)
+    );
+    if(from) f=f.filter(r=>r.issueDateISO>=from);
+    if(to)   f=f.filter(r=>r.issueDateISO<=to);
+    const cnt=document.getElementById('emp-result-count');
+    if(cnt) cnt.textContent=f.length+' record'+(f.length!==1?'s':'');
+  }
+
+  if(!f.length){
+    tbody.innerHTML=`<tr class="empty-row"><td colspan="14">${isEmpRole?'📭 No tools issued yet.':'🔍 No records found.'}</td></tr>`;
+    return;
+  }
   tbody.innerHTML=f.map((r,i)=>`
-    <tr>
+    <tr ${isOverdue(r)?'style="background:#fff5f5"':''}>
       <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
       <td><b>${r.empName}</b></td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
@@ -1466,12 +2240,51 @@ function renderEmpHistory(){
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.pageNo}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.qty||1}</td>
       <td>${shiftBadge(r.shift)}</td>
-      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate} ${r.issueTime}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.issueDate} ${r.issueTime||''}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.returnDate?r.returnDate+' '+r.returnTime:'—'}</td>
       <td>${statusBadge(r)}</td>
       <td>${condBadge(r.condition)}</td>
       <td style="font-size:.76rem">${r.remarks||'—'}</td>
     </tr>`).join('');
+}
+
+function clearEmpSearch(){
+  const inp=document.getElementById('emp-search-input');
+  const from=document.getElementById('emp-date-from');
+  const to=document.getElementById('emp-date-to');
+  if(inp) inp.value='';
+  if(from) from.value='';
+  if(to) to.value='';
+  renderEmpHistory();
+}
+
+function renderEmpSelfStats(myRecords){
+  const total=myRecords.length;
+  const pending=myRecords.filter(r=>r.status==='Issued').length;
+  const returned=myRecords.filter(r=>r.status==='Returned').length;
+  const overdue=myRecords.filter(r=>isOverdue(r)).length;
+  // Insert stats header if not already there
+  let hdr=document.getElementById('emp-self-hdr');
+  if(!hdr){
+    hdr=document.createElement('div');
+    hdr.id='emp-self-hdr';
+    const page=document.getElementById('page-employee');
+    const tcard=page.querySelector('.table-card');
+    page.insertBefore(hdr,tcard);
+  }
+  hdr.innerHTML=`
+    <div class="emp-self-header">
+      <div>
+        <h3>👷 ${currentUser.name}</h3>
+        <p>ID: ${currentUser.empId} · Your tool history</p>
+      </div>
+      <div class="emp-self-stats">
+        <div class="ess-item"><div class="ess-num">${total}</div><div class="ess-label">Total</div></div>
+        <div class="ess-item"><div class="ess-num" style="color:#fbbf24">${pending}</div><div class="ess-label">Pending</div></div>
+        <div class="ess-item"><div class="ess-num" style="color:#34d399">${returned}</div><div class="ess-label">Returned</div></div>
+        ${overdue?`<div class="ess-item"><div class="ess-num" style="color:#f87171">${overdue}</div><div class="ess-label">Overdue</div></div>`:''}
+      </div>
+    </div>`;
 }
 
 // ===== AUDIT LOG =====
@@ -1491,7 +2304,11 @@ function renderAuditLog(){
     </div>`).join('');
 }
 function auditIcon(t){
-  const icons={issue:'📤',return:'📥',edit:'✏️',delete:'🗑️',backup:'💾',restore:'📂',login:'🔓',lock:'🔒'};
+  const icons={
+    issue:'📤', return:'📥', edit:'✏️', delete:'🗑️',
+    backup:'💾', restore:'📂', login:'🔓', lock:'🔒',
+    download:'⬇️'
+  };
   return icons[t]||'📋';
 }
 function clearAuditLog(){
@@ -1544,30 +2361,48 @@ function downloadAuditExcel(silent=false){
 }
 
 // ===== ISSUE SLIP =====
+// Single record slip (from master data / issued table)
 function openSlipModal(idx){
-  const r=records[idx];
-  const companyName=localStorage.getItem('tc_company')||'TOOL CRIB';
+  openMultiSlipModal([idx]);
+}
+
+// Multi-tool slip
+function openMultiSlipModal(idxs){
+  if(!idxs||!idxs.length) return;
+  const first = records[idxs[0]];
+  if(!first) return;
+  const companyName = localStorage.getItem('tc_company')||'TOOL CRIB';
+  const toolsHTML = idxs.map((idx,i)=>{
+    const r = records[idx];
+    if(!r) return '';
+    return `<div class="slip-tool-item">
+      <span class="slip-tool-name">${i+1}. ${r.toolName}${r.toolCode?' ('+r.toolCode+')':''}</span>
+      <span class="slip-tool-qty">Qty: ${r.qty||1}</span>
+    </div>`;
+  }).join('');
+
   document.getElementById('slip-content').innerHTML=`
     <div class="slip-header">
       <h2>${companyName}</h2>
       <p>Tool Issue Slip</p>
-      <p style="font-size:.68rem;margin-top:.2rem;font-family:'JetBrains Mono',monospace">#${String(idx+1).padStart(4,'0')}</p>
+      <p style="font-size:.68rem;margin-top:.2rem;font-family:'JetBrains Mono',monospace">#${String(idxs[0]+1).padStart(4,'0')}</p>
     </div>
-    <div class="slip-row"><span class="slip-label">Employee</span><span class="slip-val">${r.empName}</span></div>
-    <div class="slip-row"><span class="slip-label">Employee ID</span><span class="slip-val">${r.empId}</span></div>
-    <div class="slip-row"><span class="slip-label">Tool Name</span><span class="slip-val">${r.toolName}</span></div>
-    <div class="slip-row"><span class="slip-label">Tool Code</span><span class="slip-val">${r.toolCode||'—'}</span></div>
-    <div class="slip-row"><span class="slip-label">Book No / Page</span><span class="slip-val">${r.bookNo} / ${r.pageNo}</span></div>
-    <div class="slip-row"><span class="slip-label">Quantity</span><span class="slip-val">${r.qty||1}</span></div>
-    <div class="slip-row"><span class="slip-label">Shift</span><span class="slip-val">${r.shift||'—'}</span></div>
-    <div class="slip-row"><span class="slip-label">Issue Date</span><span class="slip-val">${r.issueDate}</span></div>
-    <div class="slip-row"><span class="slip-label">Issue Time</span><span class="slip-val">${r.issueTime||'—'}</span></div>
-    ${r.remarks?`<div class="slip-row"><span class="slip-label">Remarks</span><span class="slip-val">${r.remarks}</span></div>`:''}
+    <div class="slip-row"><span class="slip-label">Employee</span><span class="slip-val">${first.empName}</span></div>
+    <div class="slip-row"><span class="slip-label">Employee ID</span><span class="slip-val">${first.empId}</span></div>
+    <div class="slip-row"><span class="slip-label">Book No / Page</span><span class="slip-val">${first.bookNo} / ${first.pageNo}</span></div>
+    <div class="slip-row"><span class="slip-label">Shift</span><span class="slip-val">${first.shift||'—'}</span></div>
+    <div class="slip-row"><span class="slip-label">Issue Date</span><span class="slip-val">${first.issueDate}</span></div>
+    <div class="slip-row"><span class="slip-label">Issue Time</span><span class="slip-val">${first.issueTime||'—'}</span></div>
+    ${first.remarks?`<div class="slip-row"><span class="slip-label">Remarks</span><span class="slip-val">${first.remarks}</span></div>`:''}
+    <div class="slip-tools-section">
+      <div class="slip-tools-title">🔧 Tools Issued (${idxs.length})</div>
+      ${toolsHTML}
+    </div>
     <div class="slip-sign">
       <div><div class="sign-line"></div><div>Issued By</div></div>
       <div><div class="sign-line"></div><div>Employee Sign</div></div>
     </div>
-    <div class="slip-footer">Tool Crib Management System v5</div>`;
+    <div class="slip-footer">Tool Crib Management System v6</div>`;
   document.getElementById('slip-modal').classList.add('show');
 }
 function closeSlipModal(){ document.getElementById('slip-modal').classList.remove('show'); }
@@ -1586,7 +2421,11 @@ function printSlip(){
   .slip-footer{text-align:center;margin-top:.8rem;font-size:.7rem;color:#888;border-top:1px solid #ccc;padding-top:.5rem;}
   .slip-sign{display:flex;justify-content:space-between;margin-top:1.5rem;font-size:.72rem;}
   .slip-sign div{text-align:center;}
-  .sign-line{width:100px;border-top:1px solid #000;margin:0 auto .2rem;}
+  .slip-tools-section{margin:.6rem 0;}
+  .slip-tools-title{font-weight:700;font-size:.78rem;color:#333;margin-bottom:.3rem;padding-bottom:.2rem;border-bottom:1px solid #ccc;}
+  .slip-tool-item{display:flex;justify-content:space-between;padding:.22rem 0;font-size:.78rem;border-bottom:1px dashed #e0e0e0;}
+  .slip-tool-item:last-child{border-bottom:none;}
+  .slip-tool-qty{font-family:'JetBrains Mono',monospace;font-size:.72rem;}
   </style></head><body>${slipHTML}</body></html>`);
   win.document.close();
   setTimeout(()=>{win.print();},500);
@@ -1594,6 +2433,7 @@ function printSlip(){
 
 // ===== EDIT =====
 function openEditModal(idx){
+  if(!canEdit()) return;
   const r=records[idx];
   document.getElementById('em-idx').value=idx;
   document.getElementById('em-empname').value=r.empName;
@@ -1627,6 +2467,7 @@ function confirmEdit(){
 
 // ===== DELETE =====
 function confirmDelete(idx){
+  if(!canDelete()) return;
   showConfirm('Delete Record','This will permanently delete this record. Are you sure?',()=>{
     const r=records[idx];
     addAudit('delete',`Record deleted: "${r.toolName}" issued to ${r.empName}`);
@@ -1636,7 +2477,56 @@ function confirmDelete(idx){
   });
 }
 
-// ===== BACKUP / RESTORE =====
+// ===== EMPLOYEE EXCEL DOWNLOAD =====
+function downloadEmpExcel(){
+  if(!currentUser?.empId){ showToast('Login required!','error'); return; }
+  const myRecords = records.filter(r=>r.empId===currentUser.empId);
+  if(!myRecords.length){ showToast('No records found!','error'); return; }
+
+  const data = myRecords.map((r,i)=>({
+    'S.No': i+1,
+    'Tool Name': r.toolName,
+    'Tool Code': r.toolCode||'',
+    'Book No': r.bookNo||'',
+    'Page No': r.pageNo||'',
+    'Quantity': r.qty||1,
+    'Shift': r.shift||'',
+    'Issue Date': r.issueDate,
+    'Issue Time': r.issueTime||'',
+    'Return Date': r.returnDate||'',
+    'Return Time': r.returnTime||'',
+    'Status': isOverdue(r)?'Overdue':r.status,
+    'Condition': r.condition||'',
+    'Remarks': r.remarks||r.returnRemarks||''
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  ws['!cols']=[{wch:5},{wch:25},{wch:12},{wch:10},{wch:8},{wch:8},{wch:10},{wch:14},{wch:12},{wch:14},{wch:12},{wch:12},{wch:12},{wch:20}];
+
+  // Summary sheet
+  const pending = myRecords.filter(r=>r.status==='Issued').length;
+  const returned = myRecords.filter(r=>r.status==='Returned').length;
+  const overdue = myRecords.filter(r=>isOverdue(r)).length;
+  const summary = [
+    ['Tool Crib — My Records'],
+    ['Employee:', currentUser.name],
+    ['Employee ID:', currentUser.empId],
+    ['Downloaded on:', new Date().toLocaleString('en-IN')],
+    [''],
+    ['Total Records', myRecords.length],
+    ['Pending Return', pending],
+    ['Returned', returned],
+    ['Overdue', overdue],
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'My Tool Records');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Summary');
+  XLSX.writeFile(wb, `MyTools_${currentUser.name}_${todayISO()}.xlsx`);
+
+  addAudit('backup', `Employee ${currentUser.name} (${currentUser.empId}) downloaded their records — ${myRecords.length} entries`);
+  showToast('Your records downloaded successfully! ✅');
+}
 function backupData(){
   const data={
     version:'v5',
@@ -1684,18 +2574,22 @@ function renderSettings(){
   document.getElementById('users-count').textContent=appUsers.length;
   // User list
   const ul=document.getElementById('user-mgmt-list');
-  ul.innerHTML=appUsers.length?appUsers.map((u,i)=>`
-    <div class="user-mgmt-item">
+  ul.innerHTML=appUsers.length?appUsers.map((u,i)=>{
+    const roleMap={admin:'⭐ Admin',issuer:'🔧 Issuer',viewer:'👁️ Viewer'};
+    const roleCls={admin:'role-admin',issuer:'role-issuer',viewer:'role-viewer'};
+    const role=u.role||(u.isAdmin?'admin':'issuer');
+    return`<div class="user-mgmt-item">
       <span>${u.avatar||'👤'} <span class="umi-name">${u.name}</span>
-        ${u.isAdmin?'<span class="umi-role" style="background:#fef3c7;color:#92400e">⭐ Admin</span>':'<span class="umi-role">Operator</span>'}
+        <span class="role-badge ${roleCls[role]||''}">${roleMap[role]||role}</span>
         ${u.lastLogin?`<span style="font-size:.65rem;color:var(--text2);margin-left:.3rem">Last: ${u.lastLogin}</span>`:''}
       </span>
       <span class="umi-actions">
-        <button class="umi-btn edit-btn" onclick="toggleAdmin(${i})" title="${u.isAdmin?'Remove Admin':'Make Admin'}">${u.isAdmin?'⭐':'☆'}</button>
+        <button class="umi-btn edit-btn" onclick="changeUserRole(${i})" title="Change Role">🔄 Role</button>
         <button class="umi-btn edit-btn" onclick="changeUserPin(${i})">✏️ PIN</button>
         <button class="umi-btn" onclick="removeUser(${i})">🗑️</button>
       </span>
-    </div>`).join(''):'<p style="font-size:.78rem;color:var(--text2);padding:.5rem 0">No users yet.</p>';
+    </div>`;
+  }).join(''):'<p style="font-size:.78rem;color:var(--text2);padding:.5rem 0">No users yet.</p>';
   // Employee & Tool lists
   const el=document.getElementById('emp-master-list');
   el.innerHTML=empMaster.length?empMaster.map((e,i)=>`
@@ -1720,27 +2614,44 @@ function renderSettings(){
 function addUserManual(){
   const name=document.getElementById('new-username').value.trim();
   const pin=document.getElementById('new-userpin').value.trim();
-  const isAdmin=document.getElementById('new-useradmin').checked;
+  const role=document.getElementById('new-userrole').value;
+  const isAdminFlag = role==='admin' || document.getElementById('new-useradmin').checked;
   if(!name){showToast('Enter a name!','error');return;}
   if(!/^\d{4}$/.test(pin)){showToast('PIN must be exactly 4 digits!','error');return;}
   if(appUsers.find(u=>u.name.toLowerCase()===name.toLowerCase())){showToast('User already exists!','error');return;}
   const idx=appUsers.length;
-  appUsers.push({name, pin, isAdmin, avatar: AVATARS[idx % AVATARS.length]});
+  appUsers.push({name, pin, role, isAdmin: isAdminFlag, avatar: AVATARS[idx % AVATARS.length]});
   saveUsers();
   document.getElementById('new-username').value='';
   document.getElementById('new-userpin').value='';
   document.getElementById('new-useradmin').checked=false;
+  document.getElementById('new-userrole').value='issuer';
   renderSettings();
-  addAudit('edit',`New user "${name}" added${isAdmin?' (Admin)':''}`);
-  showToast(`User "${name}" added${isAdmin?' as Admin':''}!`);
+  addAudit('edit',`New user "${name}" added as ${role}`);
+  showToast(`User "${name}" added as ${role}!`);
+}
+
+function changeUserRole(i){
+  const roles=['admin','issuer','viewer'];
+  const labels={'admin':'⭐ Admin','issuer':'🔧 Issuer','viewer':'👁️ Viewer'};
+  const cur=appUsers[i].role||(appUsers[i].isAdmin?'admin':'issuer');
+  const next=roles[(roles.indexOf(cur)+1)%roles.length];
+  showConfirm('Change Role',`Change "${appUsers[i].name}" from ${labels[cur]} → ${labels[next]}?`,()=>{
+    appUsers[i].role=next;
+    appUsers[i].isAdmin=next==='admin';
+    saveUsers(); renderSettings();
+    addAudit('edit',`"${appUsers[i].name}" role changed to ${next}`);
+    showToast(`"${appUsers[i].name}" is now ${labels[next]}!`);
+  });
 }
 
 function toggleAdmin(i){
   const wasAdmin=appUsers[i].isAdmin;
   appUsers[i].isAdmin=!wasAdmin;
+  appUsers[i].role=appUsers[i].isAdmin?'admin':'issuer';
   saveUsers(); renderSettings();
-  addAudit('edit',`"${appUsers[i].name}" ${appUsers[i].isAdmin?'promoted to Admin':'removed from Admin'}`);
-  showToast(`"${appUsers[i].name}" is now ${appUsers[i].isAdmin?'⭐ Admin':'Operator'}!`);
+  addAudit('edit',`"${appUsers[i].name}" ${appUsers[i].isAdmin?'promoted to Admin':'set as Issuer'}`);
+  showToast(`"${appUsers[i].name}" is now ${appUsers[i].isAdmin?'⭐ Admin':'🔧 Issuer'}!`);
 }
 
 function changeUserPin(i){
@@ -1760,6 +2671,142 @@ function removeUser(i){
     addAudit('delete',`User "${name}" removed`);
     showToast(`User "${name}" removed!`,'error');
   });
+}
+
+// ===== SAP IMPORT =====
+function uploadSAP(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false});
+      if(rows.length < 2){ showToast('Empty file!','error'); return; }
+
+      // Detect header row — find column indexes
+      const headers = rows[0].map(h=>(h||'').toString().trim().toLowerCase());
+      const col = name => headers.findIndex(h=>h.includes(name.toLowerCase()));
+
+      const iMatDoc   = col('materialdocument')!==-1 ? col('materialdocument') : col('material document');
+      const iPostDate = col('posting date')!==-1 ? col('posting date') : col('postingdate');
+      const iVendorNo = col('vendor no')!==-1 ? col('vendor no') : col('vendorno');
+      const iVendorNm = col('vendor name')!==-1 ? col('vendor name') : col('vendorname');
+      const iSubVend  = col('sub vendor');
+      const iMatCode  = col('material code')!==-1 ? col('material code') : col('materialcode');
+      const iMatText  = col('material text')!==-1 ? col('material text') : col('materialtext');
+      const iMovType  = col('movement type')!==-1 ? col('movement type') : col('movementtype');
+      const iQty      = col('quantity')!==-1 ? col('quantity') : col('qty');
+      const iRef      = col('reference');
+      const iRemarks  = col('remarks');
+
+      let added=0, skipped=0, empAdded=0, toolAdded=0;
+      const existingDocs = new Set(records.map(r=>r.sapDocNo).filter(Boolean));
+
+      rows.forEach((row, i)=>{
+        if(i===0) return;
+        const movType = (row[iMovType]||'').toString().trim();
+        if(movType !== '311' && movType !== '312') return;
+
+        const matDoc   = (row[iMatDoc]||'').toString().trim();
+        const postDate = (row[iPostDate]||'').toString().trim();
+        const vendorNo = (row[iVendorNo]||'').toString().trim();
+        const vendorNm = (row[iVendorNm]||'').toString().trim();
+        const subVend  = iSubVend!==-1 ? (row[iSubVend]||'').toString().trim() : '';
+        const matCode  = iMatCode!==-1 ? (row[iMatCode]||'').toString().trim() : '';
+        const matText  = (row[iMatText]||'').toString().trim();
+        const qty      = (row[iQty]||'1').toString().trim();
+        const ref      = iRef!==-1 ? (row[iRef]||'').toString().trim() : '';
+        const remarks  = iRemarks!==-1 ? (row[iRemarks]||'').toString().trim() : '';
+
+        if(!vendorNo || !matText) return;
+
+        // Duplicate check by MaterialDocument
+        if(matDoc && existingDocs.has(matDoc)){ skipped++; return; }
+        if(matDoc) existingDocs.add(matDoc);
+
+        const status = movType === '311' ? 'Issued' : 'Returned';
+
+        // Parse date — handle dd.mm.yyyy / yyyy-mm-dd / dd/mm/yyyy
+        let issueDateISO = todayISO();
+        let issueDateFmt = postDate;
+        try{
+          if(/\d{2}\.\d{2}\.\d{4}/.test(postDate)){
+            const [d,m,y] = postDate.split('.');
+            issueDateISO = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+            issueDateFmt = `${d}/${m}/${y}`;
+          } else if(/\d{4}-\d{2}-\d{2}/.test(postDate)){
+            issueDateISO = postDate;
+            const [y,m,d] = postDate.split('-');
+            issueDateFmt = `${d}/${m}/${y}`;
+          } else if(/\d{2}\/\d{2}\/\d{4}/.test(postDate)){
+            const [d,m,y] = postDate.split('/');
+            issueDateISO = `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+            issueDateFmt = postDate;
+          }
+        } catch(ex){}
+
+        const rec = {
+          empId: vendorNo,
+          empName: vendorNm,
+          toolName: matText,
+          toolCode: matCode,
+          bookNo: ref || '—',
+          pageNo: '—',
+          qty: qty,
+          shift: '',
+          remarks: [subVend?`Sub-vendor: ${subVend}`:'', remarks].filter(Boolean).join(' | '),
+          issueDate: issueDateFmt,
+          issueTime: '',
+          issueDateISO: issueDateISO,
+          status: status,
+          returnDate: status==='Returned' ? issueDateFmt : '',
+          returnTime: '',
+          returnDateISO: status==='Returned' ? issueDateISO : '',
+          condition: status==='Returned' ? 'Good' : '',
+          returnRemarks: '',
+          sapDocNo: matDoc,
+          sapImport: true
+        };
+        records.push(rec);
+        added++;
+
+        // Auto-add Employee Master
+        if(vendorNo && vendorNm && !empMaster.find(e=>e.id===vendorNo)){
+          empMaster.push({name:vendorNm, id:vendorNo});
+          empAdded++;
+        }
+        // Auto-add Tool Master
+        if(matText && !toolMaster.find(t=>t.name===matText)){
+          toolMaster.push({name:matText, code:matCode});
+          toolAdded++;
+        }
+      });
+
+      saveData(); saveEmpMaster(); saveToolMaster();
+      updateDashboard(); renderRecent(); renderSettings();
+      addAudit('restore', `SAP Import: ${added} records added, ${skipped} duplicates skipped`);
+
+      const resultEl = document.getElementById('sap-import-result');
+      resultEl.style.display='block';
+      resultEl.innerHTML=`
+        <div style="background:var(--success-light);border:1.5px solid var(--success);border-radius:8px;padding:.8rem 1rem;font-size:.8rem;">
+          <div style="font-weight:700;color:#065f46;margin-bottom:.5rem">✅ SAP Import completed successfully!</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem;color:#065f46;">
+            <span>📥 Records imported:</span><span><b>${added}</b></span>
+            <span>⏭️ Duplicates skipped:</span><span><b>${skipped}</b></span>
+            <span>👷 New employees added:</span><span><b>${empAdded}</b></span>
+            <span>🔧 New tools added:</span><span><b>${toolAdded}</b></span>
+          </div>
+        </div>`;
+      showToast(`SAP Import: ${added} records added!`);
+    } catch(err){
+      showToast('Import failed! Check file format.','error');
+      console.error('SAP Import Error:', err);
+    }
+    input.value='';
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 // ===== UPLOAD EXCEL =====
@@ -1889,11 +2936,46 @@ function downloadExcel(){
   showToast('Excel downloaded! Sheet 3 = Audit Log (Admin protected)');
 }
 
-// ===== INIT =====
+// ===== DARK MODE =====
+function toggleTheme(){
+  const isDark = document.body.classList.toggle('dark');
+  localStorage.setItem('tc_theme', isDark ? 'dark' : 'light');
+  updateThemeBtn(isDark);
+  // Re-render charts for dark mode
+  if(Object.keys(chartInstances).length) setTimeout(renderCharts, 100);
+}
+
+function updateThemeBtn(isDark){
+  const icon  = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  if(icon)  icon.textContent  = isDark ? '☀️' : '🌙';
+  if(label) label.textContent = isDark ? 'Light' : 'Dark';
+}
+
+function initTheme(){
+  // Check saved preference, fallback to system preference
+  const saved = localStorage.getItem('tc_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = saved ? saved === 'dark' : prefersDark;
+  if(isDark) document.body.classList.add('dark');
+  updateThemeBtn(isDark);
+}
+
 updateDashboard();
 renderRecent();
 startClock();
 initUsers();
+initTheme();
+// Init issue form with 1 tool row + last used book/page
+(function initIssueForm(){
+  addToolRow();
+  const lastBook = localStorage.getItem('tc_last_bookno')||'';
+  const lastPage = localStorage.getItem('tc_last_pageno')||'';
+  const bEl = document.getElementById('i-bookno');
+  const pEl = document.getElementById('i-pageno');
+  if(bEl) bEl.value = lastBook;
+  if(pEl) pEl.value = lastPage;
+})();
 // Start at login screen always
 document.getElementById('login-screen').classList.remove('hide');
 </script>
