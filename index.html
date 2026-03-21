@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Tool Crib">
 <meta name="theme-color" content="#0f4c81">
-<title>Tool Crib Management v5</title>
+<title>Tool Crib Management v6</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -120,11 +120,11 @@ body.dark .emp-self-header{background:linear-gradient(135deg,#1d4ed8,#2563eb);}
 .slip-tool-name{flex:1;}
 .slip-tool-qty{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#555;}
 
-.theme-toggle{position:fixed;bottom:1.5rem;left:calc(var(--sw) + 1rem);z-index:150;background:var(--white);border:1.5px solid var(--border);border-radius:50px;padding:.4rem .75rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.75rem;font-weight:700;color:var(--text2);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.12);}
+.theme-toggle{position:fixed;bottom:1.5rem;right:1.5rem;z-index:150;background:var(--white);border:1.5px solid var(--border);border-radius:50px;padding:.4rem .75rem;display:flex;align-items:center;gap:.4rem;cursor:pointer;font-size:.75rem;font-weight:700;color:var(--text2);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.12);}
 .theme-toggle:hover{border-color:var(--primary);color:var(--primary);}
 .theme-toggle .tt-icon{font-size:1rem;}
 @media(max-width:768px){
-  .theme-toggle{left:1rem;bottom:1rem;}
+  .theme-toggle{right:1rem;bottom:1rem;}
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
@@ -322,10 +322,14 @@ tr:hover td{background:#f8fafc;}
 .settings-card{background:var(--white);border-radius:14px;padding:1.5rem;border:1px solid var(--border);}
 .settings-card h3{font-size:.95rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem;}
 .settings-card p{font-size:.75rem;color:var(--text2);margin-bottom:1rem;}
-.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);}
-.upload-zone:hover{border-color:var(--primary);background:#e8f0fb;}
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);position:relative;}
+.upload-zone:hover,.upload-zone:active{border-color:var(--primary);background:#e8f0fb;}
 .upload-zone input[type=file]{display:none;}
-.upload-zone .uz-icon{font-size:2rem;margin-bottom:.5rem;}
+.upload-zone-wrap{border:2px dashed var(--border);border-radius:10px;padding:1.2rem;text-align:center;background:var(--bg);margin-bottom:.5rem;}
+.upload-zone-wrap .uz-icon{font-size:2rem;margin-bottom:.4rem;}
+.upload-zone-wrap p{font-size:.8rem;color:var(--text2);margin:0;}
+.upload-zone-wrap .uz-hint{font-size:.7rem;color:#94a3b8;margin-top:.3rem;}
+.upload-zone .uz-icon{font-size:2rem;margin-bottom:.4rem;}
 .upload-zone p{font-size:.8rem;color:var(--text2);margin:0;}
 .upload-zone .uz-hint{font-size:.7rem;color:#94a3b8;margin-top:.3rem;}
 .master-list{max-height:200px;overflow-y:auto;margin-top:.75rem;}
@@ -548,60 +552,51 @@ tr:hover td{background:#f8fafc;}
   <div class="login-logo">
     <span class="pl-icon">🔧</span>
     <h2>Tool Crib Management</h2>
-    <p>ISSUE & RETURN SYSTEM · v5.0</p>
+    <p>ISSUE & RETURN SYSTEM · v6.0</p>
   </div>
 
-  <!-- LOGIN TABS -->
-  <div style="width:100%;max-width:500px;padding:0 1.2rem;">
+  <!-- LOGIN TABS — Hidden, Employee Login only by default -->
+  <div style="display:none">
     <div class="login-tabs">
-      <button class="login-tab active" id="tab-staff" onclick="switchLoginTab('staff')">👥 Staff Login</button>
-      <button class="login-tab" id="tab-employee" onclick="switchLoginTab('employee')">👷 Employee Login</button>
+      <button class="login-tab" id="tab-staff" onclick="switchLoginTab('staff')">👥 Staff Login</button>
+      <button class="login-tab active" id="tab-employee" onclick="switchLoginTab('employee')">👷 Employee Login</button>
     </div>
   </div>
 
-  <!-- STAFF LOGIN -->
-  <div id="staff-login-section">
+  <!-- STAFF LOGIN — Hidden by default -->
+  <div id="staff-login-section" style="display:none">
     <!-- Step 1: Select user -->
     <div class="user-select-wrap" id="login-step1">
       <h3>Select your account</h3>
       <div class="user-grid" id="user-grid-list"></div>
     </div>
-    <!-- Step 2: Enter PIN -->
+    <!-- Step 2: Enter Password -->
     <div class="pin-entry-wrap" id="login-step2" style="display:none">
       <div class="pin-entry-user">
         <div class="peu-avatar" id="peu-avatar">👤</div>
         <div class="peu-name" id="peu-name">—</div>
-        <div class="peu-sub">Enter your 4-digit PIN</div>
+        <div class="peu-sub">Enter your password</div>
       </div>
       <div class="pin-box">
-        <div class="pin-dots">
-          <div class="pin-dot" id="pd0"></div>
-          <div class="pin-dot" id="pd1"></div>
-          <div class="pin-dot" id="pd2"></div>
-          <div class="pin-dot" id="pd3"></div>
+        <div style="position:relative;margin-bottom:.8rem;">
+          <input type="password" id="staff-pwd-input"
+            placeholder="Enter password..."
+            style="width:100%;padding:.7rem 2.5rem .7rem 1rem;border:2px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;"
+            oninput="document.getElementById('pin-error').textContent=''"
+            onkeydown="if(event.key==='Enter') checkPin()">
+          <span onclick="togglePwdVisibility('staff-pwd-input','staff-eye')"
+            id="staff-eye"
+            style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span>
         </div>
-        <div class="pin-grid">
-          <button class="pin-btn" onclick="pinPress('1')">1</button>
-          <button class="pin-btn" onclick="pinPress('2')">2</button>
-          <button class="pin-btn" onclick="pinPress('3')">3</button>
-          <button class="pin-btn" onclick="pinPress('4')">4</button>
-          <button class="pin-btn" onclick="pinPress('5')">5</button>
-          <button class="pin-btn" onclick="pinPress('6')">6</button>
-          <button class="pin-btn" onclick="pinPress('7')">7</button>
-          <button class="pin-btn" onclick="pinPress('8')">8</button>
-          <button class="pin-btn" onclick="pinPress('9')">9</button>
-          <button class="pin-btn" onclick="pinBackspace()" style="opacity:.7">⌫</button>
-          <button class="pin-btn" onclick="pinPress('0')">0</button>
-          <button class="pin-btn" onclick="pinPress('')" style="opacity:.4">✕</button>
-        </div>
-        <div class="pin-error" id="pin-error"></div>
+        <button class="emp-id-btn" onclick="checkPin()">Login →</button>
+        <div class="pin-error" id="pin-error" style="margin-top:.5rem"></div>
       </div>
       <span class="pin-back-link" onclick="goLoginStep1()">← Back to user list</span>
     </div>
   </div>
 
-  <!-- EMPLOYEE LOGIN -->
-  <div id="employee-login-section" style="display:none">
+  <!-- EMPLOYEE LOGIN — Shown by default -->
+  <div id="employee-login-section">
     <!-- Step 1: Enter Employee ID -->
     <div class="emp-login-wrap" id="emp-step1">
       <div class="emp-id-box">
@@ -612,35 +607,35 @@ tr:hover td{background:#f8fafc;}
         <div class="pin-error" id="emp-id-error" style="margin-top:.5rem"></div>
       </div>
     </div>
-    <!-- Step 2: PIN entry (create or enter) -->
+    <!-- Step 2: Password entry (create or enter) -->
     <div class="pin-entry-wrap" id="emp-step2" style="display:none">
       <div class="pin-entry-user">
         <div class="peu-avatar" id="emp-peu-avatar">👷</div>
         <div class="peu-name" id="emp-peu-name">—</div>
-        <div class="emp-create-pin" id="emp-pin-subtitle">Enter your 4-digit PIN</div>
+        <div class="emp-create-pin" id="emp-pin-subtitle">Enter your password</div>
       </div>
       <div class="pin-box">
-        <div class="pin-dots">
-          <div class="pin-dot" id="epd0"></div>
-          <div class="pin-dot" id="epd1"></div>
-          <div class="pin-dot" id="epd2"></div>
-          <div class="pin-dot" id="epd3"></div>
+        <div style="position:relative;margin-bottom:.6rem;">
+          <input type="password" id="emp-pwd-input"
+            placeholder="Enter password..."
+            style="width:100%;padding:.7rem 2.5rem .7rem 1rem;border:2px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;"
+            oninput="document.getElementById('emp-pin-error').textContent=''"
+            onkeydown="if(event.key==='Enter') empCheckPin()">
+          <span onclick="togglePwdVisibility('emp-pwd-input','emp-eye')"
+            id="emp-eye"
+            style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span>
         </div>
-        <div class="pin-grid">
-          <button class="pin-btn" onclick="empPinPress('1')">1</button>
-          <button class="pin-btn" onclick="empPinPress('2')">2</button>
-          <button class="pin-btn" onclick="empPinPress('3')">3</button>
-          <button class="pin-btn" onclick="empPinPress('4')">4</button>
-          <button class="pin-btn" onclick="empPinPress('5')">5</button>
-          <button class="pin-btn" onclick="empPinPress('6')">6</button>
-          <button class="pin-btn" onclick="empPinPress('7')">7</button>
-          <button class="pin-btn" onclick="empPinPress('8')">8</button>
-          <button class="pin-btn" onclick="empPinPress('9')">9</button>
-          <button class="pin-btn" onclick="empPinBackspace()" style="opacity:.7">⌫</button>
-          <button class="pin-btn" onclick="empPinPress('0')">0</button>
-          <button class="pin-btn" onclick="empPinPress('')" style="opacity:.4">✕</button>
+        <div id="emp-pwd-confirm-wrap" style="position:relative;margin-bottom:.6rem;display:none;">
+          <input type="password" id="emp-pwd-confirm"
+            placeholder="Confirm password..."
+            style="width:100%;padding:.7rem 2.5rem .7rem 1rem;border:2px solid rgba(255,255,255,.25);border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;outline:none;box-sizing:border-box;"
+            onkeydown="if(event.key==='Enter') empCheckPin()">
+          <span onclick="togglePwdVisibility('emp-pwd-confirm','emp-eye2')"
+            id="emp-eye2"
+            style="position:absolute;right:.75rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:1rem;user-select:none;">👁️</span>
         </div>
-        <div class="pin-error" id="emp-pin-error"></div>
+        <div class="pin-error" id="emp-pin-error" style="margin-bottom:.5rem"></div>
+        <button class="emp-id-btn" onclick="empCheckPin()">Next →</button>
       </div>
       <span class="pin-back-link" onclick="goEmpStep1()">← Back</span>
     </div>
@@ -662,7 +657,7 @@ tr:hover td{background:#f8fafc;}
     <span class="logo-icon">🔧</span>
     <h1>Tool Crib<br>Management</h1>
     <p>ISSUE & RETURN SYSTEM</p>
-    <span class="logo-ver">v5.0</span>
+    <span class="logo-ver">v6.0</span>
   </div>
   <!-- Logged-in user bar -->
   <div class="logged-bar" id="logged-bar">
@@ -738,35 +733,28 @@ tr:hover td{background:#f8fafc;}
     <h3>🧑‍🔧 Employee Details</h3>
     <div class="form-grid">
       <div class="field ac-wrap">
-        <label>Employee Name *</label>
-        <input id="i-empname" type="text" placeholder="Type to search employee..." autocomplete="off"
-          oninput="showEmpSuggestions(this,'ac-empname')"
-          onkeydown="acKeyNav(event,'ac-empname','emp')"
-          onblur="setTimeout(()=>hideAC('ac-empname'),200)">
-        <div class="ac-dropdown" id="ac-empname"></div>
+        <label>Employee ID *</label>
+        <input id="i-empid" type="text" placeholder="Enter Employee ID..." autocomplete="off"
+          oninput="showEmpIdSuggestions(this,'ac-empid')"
+          onkeydown="acKeyNav(event,'ac-empid','empid')"
+          onblur="setTimeout(()=>hideAC('ac-empid'),200)">
+        <div class="ac-dropdown" id="ac-empid"></div>
       </div>
       <div class="field">
-        <label>Employee ID <span class="auto-badge fill-badge">AUTO FILL</span></label>
-        <input id="i-empid" type="text" placeholder="Auto-filled on name select" readonly>
+        <label>Employee Name</label>
+        <input id="i-empname" type="text" placeholder="" readonly>
       </div>
       <div class="field">
-        <label>Book No <span class="auto-badge">LAST USED</span></label>
+        <label>Book No</label>
         <input id="i-bookno" type="text" placeholder="e.g. BK-001" autocomplete="off">
       </div>
       <div class="field">
-        <label>Page No <span class="auto-badge">LAST USED</span></label>
+        <label>Page No</label>
         <input id="i-pageno" type="text" placeholder="e.g. 42" autocomplete="off">
       </div>
-      <div class="field">
-        <label>Shift *</label>
-        <select id="i-shift">
-          <option value="Morning">🌅 Morning</option>
-          <option value="Evening">🌆 Evening</option>
-          <option value="Night">🌙 Night</option>
-        </select>
-      </div>
-      <div class="field"><label>Issue Date <span class="auto-badge">AUTO</span></label><input id="i-date" type="text" readonly></div>
-      <div class="field"><label>Issue Time <span class="auto-badge">AUTO</span></label><input id="i-time" type="text" readonly></div>
+
+      <div class="field"><label>Issue Date</label><input id="i-date" type="text" readonly></div>
+      <div class="field"><label>Issue Time</label><input id="i-time" type="text" readonly></div>
     </div>
 
     <h3>🔧 Tools to Issue</h3>
@@ -1012,11 +1000,11 @@ tr:hover td{background:#f8fafc;}
     <!-- USER MANAGEMENT -->
     <div class="settings-card">
       <h3>👥 User Management <span class="count-pill" id="users-count">0</span></h3>
-      <p>Add users with individual PINs. Each login is tracked in Audit Log.<br><span style="font-size:.7rem;color:var(--danger);font-weight:600">⭐ Mark one user as Admin to manage audit log.</span></p>
+      <p>Add users with passwords. Each login is tracked in Audit Log.<br><span style="font-size:.7rem;color:var(--danger);font-weight:600">⭐ Mark one user as Admin to manage audit log.</span></p>
       <div class="user-mgmt-list" id="user-mgmt-list"></div>
       <div class="add-user-form">
         <input id="new-username" type="text" placeholder="Name (e.g. Ravi)" maxlength="20">
-        <input id="new-userpin" type="password" placeholder="4-digit PIN" maxlength="4">
+        <input id="new-userpin" type="password" placeholder="Password (min 6 chars)">
         <select id="new-userrole" style="padding:.45rem .6rem;border:1.5px solid var(--border);border-radius:7px;font-size:.8rem;outline:none;font-family:'Plus Jakarta Sans',sans-serif;grid-column:1/-1">
           <option value="issuer">🔧 Issuer (Issue + Return)</option>
           <option value="admin">⭐ Admin (Full Access)</option>
@@ -1032,18 +1020,12 @@ tr:hover td{background:#f8fafc;}
       </div>
     </div>
 
-    <!-- BACKUP / RESTORE -->
+    <!-- BACKUP -->
     <div class="settings-card">
-      <h3>💾 Backup & Restore</h3>
+      <h3>💾 Backup</h3>
       <p>Save all data as JSON file. Load it on any device to restore.</p>
-      <div class="btn-row" style="margin-bottom:.8rem">
+      <div class="btn-row">
         <button class="btn btn-teal" onclick="backupData()">💾 Save Backup (.json)</button>
-      </div>
-      <div class="upload-zone" onclick="document.getElementById('restore-upload').click()">
-        <input type="file" id="restore-upload" accept=".json" onchange="restoreData(this)">
-        <div class="uz-icon">📂</div>
-        <p>Click to Load Backup JSON</p>
-        <p class="uz-hint">This will replace all current data</p>
       </div>
     </div>
 
@@ -1051,11 +1033,11 @@ tr:hover td{background:#f8fafc;}
     <div class="settings-card">
       <h3>👷 Employee Master <span class="count-pill" id="emp-count">0</span></h3>
       <p>Upload Excel with columns: <b>Employee Name, Employee ID</b></p>
-      <div class="upload-zone" onclick="document.getElementById('emp-upload').click()">
-        <input type="file" id="emp-upload" accept=".xlsx,.xls,.csv" onchange="uploadEmployees(this)">
-        <div class="uz-icon">📁</div>
-        <p>Click to upload Employee Excel / CSV</p>
-        <p class="uz-hint">Columns: Employee Name | Employee ID</p>
+      <div style="margin-bottom:.5rem;">
+        <p style="font-size:.75rem;color:var(--text2);margin-bottom:.4rem;">📁 Select Employee Excel / CSV file:</p>
+        <input type="file" id="emp-upload" accept=".xlsx,.xls,.csv" onchange="uploadEmployees(this)"
+          style="width:100%;padding:.5rem;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--bg);color:var(--text);cursor:pointer;">
+        <p style="font-size:.68rem;color:#94a3b8;margin-top:.3rem;">Columns: Employee Name | Employee ID</p>
       </div>
       <div class="add-manual">
         <input id="new-empname" type="text" placeholder="Employee Name">
@@ -1069,11 +1051,11 @@ tr:hover td{background:#f8fafc;}
     <div class="settings-card">
       <h3>🔧 Tool Master <span class="count-pill" id="tool-count">0</span></h3>
       <p>Upload Excel with columns: <b>Tool Name, Tool Code</b></p>
-      <div class="upload-zone" onclick="document.getElementById('tool-upload').click()">
-        <input type="file" id="tool-upload" accept=".xlsx,.xls,.csv" onchange="uploadTools(this)">
-        <div class="uz-icon">📁</div>
-        <p>Click to upload Tool Excel / CSV</p>
-        <p class="uz-hint">Columns: Tool Name | Tool Code</p>
+      <div style="margin-bottom:.5rem;">
+        <p style="font-size:.75rem;color:var(--text2);margin-bottom:.4rem;">📁 Select Tool Excel / CSV file:</p>
+        <input type="file" id="tool-upload" accept=".xlsx,.xls,.csv" onchange="uploadTools(this)"
+          style="width:100%;padding:.5rem;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--bg);color:var(--text);cursor:pointer;">
+        <p style="font-size:.68rem;color:#94a3b8;margin-top:.3rem;">Columns: Tool Name | Tool Code</p>
       </div>
       <div class="add-manual">
         <input id="new-toolname" type="text" placeholder="Tool Name">
@@ -1093,11 +1075,11 @@ tr:hover td{background:#f8fafc;}
       <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:8px;padding:.7rem 1rem;margin-bottom:.8rem;font-size:.75rem;color:#92400e;">
         ⚠️ <b>Movement Type:</b> 311 = Issue &nbsp;|&nbsp; 312 = Return &nbsp;|&nbsp; Duplicate records will be skipped (based on MaterialDocument)
       </div>
-      <div class="upload-zone" onclick="document.getElementById('sap-upload').click()">
-        <input type="file" id="sap-upload" accept=".xlsx,.xls,.csv" onchange="uploadSAP(this)">
-        <div class="uz-icon">🏭</div>
-        <p>Click to upload SAP Excel / CSV</p>
-        <p class="uz-hint">311 → Issue &nbsp;|&nbsp; 312 → Return</p>
+      <div style="margin-bottom:.5rem;">
+        <p style="font-size:.75rem;color:var(--text2);margin-bottom:.4rem;">🏭 Select SAP Excel / CSV file:</p>
+        <input type="file" id="sap-upload" accept=".xlsx,.xls,.csv" onchange="uploadSAP(this)"
+          style="width:100%;padding:.5rem;border:1.5px solid var(--border);border-radius:8px;font-size:.8rem;background:var(--bg);color:var(--text);cursor:pointer;">
+        <p style="font-size:.68rem;color:#94a3b8;margin-top:.3rem;">311 → Issue &nbsp;|&nbsp; 312 → Return</p>
       </div>
       <div id="sap-import-result" style="margin-top:.75rem;display:none"></div>
     </div>
@@ -1212,7 +1194,7 @@ let confirmCallback = null;
 
 // Multi-user login state
 let currentUser = null;   // { name, avatar, loginTime }
-let pinBuffer = '';
+let pinBuffer = ''; // legacy
 let pinTargetUser = null; // user being PIN-checked
 
 function saveData()      { localStorage.setItem('tc_records', JSON.stringify(records)); }
@@ -1231,7 +1213,7 @@ function addAudit(type, msg){
 
 // ===== HELPERS =====
 function nowDateStr(){ return new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function nowTimeStr(){ return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true}); }
+function nowTimeStr(){ return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false}); }
 function todayISO()  { return new Date().toISOString().split('T')[0]; }
 function isOverdue(r){
   if(r.status!=='Issued') return false;
@@ -1278,9 +1260,22 @@ function switchLoginTab(tab){
 }
 
 function empCheckId(){
-  const id = document.getElementById('emp-login-id').value.trim().toUpperCase();
+  const rawId = document.getElementById('emp-login-id').value.trim();
+
+  // Secret keyword — exact match "Admin" (case-sensitive)
+  if(rawId === 'Admin'){
+    document.getElementById('emp-login-id').value='';
+    document.getElementById('emp-id-error').textContent='';
+    // Show staff login
+    document.getElementById('employee-login-section').style.display='none';
+    document.getElementById('staff-login-section').style.display='';
+    renderUserGrid();
+    return;
+  }
+
+  const id = rawId.toUpperCase();
   if(!id){ document.getElementById('emp-id-error').textContent='Please enter your Employee ID!'; return; }
-  const emp = empMaster.find(e=>e.id.toUpperCase()===id || e.id===document.getElementById('emp-login-id').value.trim());
+  const emp = empMaster.find(e=>e.id.toUpperCase()===id || e.id===rawId);
   if(!emp){ document.getElementById('emp-id-error').textContent='❌ Employee ID not found. Please check with Admin.'; return; }
   const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
   const hasPin = !!empPins[emp.id];
@@ -1288,58 +1283,79 @@ function empCheckId(){
   document.getElementById('emp-peu-avatar').textContent='👷';
   document.getElementById('emp-peu-name').textContent = emp.name;
   document.getElementById('emp-pin-subtitle').textContent = hasPin
-    ? 'Enter your 4-digit PIN'
-    : '🆕 Create a new 4-digit PIN';
+    ? 'Enter your password'
+    : '🆕 Create a new password (min 6 chars)';
   document.getElementById('emp-pin-error').textContent='';
-  empPinBuffer=''; updateEmpPinDots();
+  document.getElementById('emp-pwd-input').value='';
+  document.getElementById('emp-pwd-input').style.display='';
+  document.getElementById('emp-pwd-confirm').value='';
+  document.getElementById('emp-pwd-confirm-wrap').style.display='none';
+  empLoginTarget.confirmPwd = null;
   document.getElementById('emp-step1').style.display='none';
   document.getElementById('emp-step2').style.display='block';
 }
 
 function goEmpStep1(){
-  empLoginTarget=null; empPinBuffer='';
+  empLoginTarget=null;
   document.getElementById('emp-step1').style.display='block';
   document.getElementById('emp-step2').style.display='none';
-  updateEmpPinDots();
+  document.getElementById('emp-pwd-input').value='';
+  document.getElementById('emp-pwd-confirm').value='';
+  document.getElementById('emp-pwd-input').style.display='';
+  document.getElementById('emp-pwd-confirm-wrap').style.display='none';
 }
 
-function empPinPress(n){
-  if(!n) return;
-  if(empPinBuffer.length>=4) return;
-  empPinBuffer+=n; updateEmpPinDots();
-  if(empPinBuffer.length===4) setTimeout(empCheckPin,200);
-}
-function empPinBackspace(){ empPinBuffer=empPinBuffer.slice(0,-1); updateEmpPinDots(); }
-function updateEmpPinDots(){
-  for(let i=0;i<4;i++) document.getElementById('epd'+i).className='pin-dot'+(i<empPinBuffer.length?' filled':'');
-}
-
+// ===== EMPLOYEE PASSWORD LOGIN =====
 function empCheckPin(){
   if(!empLoginTarget) return;
+  const pwd = (document.getElementById('emp-pwd-input')?.value||'');
+  if(!pwd){ document.getElementById('emp-pin-error').textContent='Please enter a password!'; return; }
+
   const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
+
   if(empLoginTarget.isNewPin){
-    if(!empLoginTarget.confirmPin){
-      empLoginTarget.confirmPin = empPinBuffer;
-      empPinBuffer=''; updateEmpPinDots();
-      document.getElementById('emp-pin-subtitle').textContent='🔁 Confirm your PIN (enter again)';
+    // First time — need confirm
+    if(pwd.length < 6){
+      document.getElementById('emp-pin-error').textContent='❌ Password must be at least 6 characters!';
+      return;
+    }
+    if(!empLoginTarget.confirmPwd){
+      // Store first entry, show confirm field
+      empLoginTarget.confirmPwd = pwd;
+      document.getElementById('emp-pwd-input').value='';
+      document.getElementById('emp-pin-subtitle').textContent='🔁 Confirm your password';
+      document.getElementById('emp-pwd-confirm-wrap').style.display='';
+      document.getElementById('emp-pwd-input').style.display='none';
       document.getElementById('emp-pin-error').textContent='';
+      document.getElementById('emp-pwd-confirm').focus();
       return;
     }
-    if(empPinBuffer !== empLoginTarget.confirmPin){
-      document.getElementById('emp-pin-error').textContent='❌ PINs do not match! Please try again.';
-      empLoginTarget.confirmPin=null; empPinBuffer=''; updateEmpPinDots();
-      document.getElementById('emp-pin-subtitle').textContent='🆕 Create a new 4-digit PIN';
+    // Confirm step
+    const confirmPwd = (document.getElementById('emp-pwd-confirm')?.value||'');
+    if(confirmPwd !== empLoginTarget.confirmPwd){
+      document.getElementById('emp-pin-error').textContent='❌ Passwords do not match! Try again.';
+      empLoginTarget.confirmPwd = null;
+      document.getElementById('emp-pwd-confirm').value='';
+      document.getElementById('emp-pwd-input').value='';
+      document.getElementById('emp-pwd-input').style.display='';
+      document.getElementById('emp-pwd-confirm-wrap').style.display='none';
+      document.getElementById('emp-pin-subtitle').textContent='🆕 Create a new password (min 6 chars)';
       return;
     }
-    empPins[empLoginTarget.id] = empPinBuffer;
+    // Save password
+    empPins[empLoginTarget.id] = empLoginTarget.confirmPwd;
     localStorage.setItem('tc_emp_pins', JSON.stringify(empPins));
+    document.getElementById('emp-pwd-input').value='';
+    document.getElementById('emp-pwd-confirm').value='';
     empLoginSuccess();
   } else {
-    if(empPinBuffer !== empPins[empLoginTarget.id]){
-      document.getElementById('emp-pin-error').textContent='❌ Wrong PIN. Try again.';
-      empPinBuffer=''; updateEmpPinDots();
+    // Existing password check
+    if(pwd !== empPins[empLoginTarget.id]){
+      document.getElementById('emp-pin-error').textContent='❌ Wrong password. Try again.';
+      document.getElementById('emp-pwd-input').value='';
       return;
     }
+    document.getElementById('emp-pwd-input').value='';
     empLoginSuccess();
   }
 }
@@ -1461,12 +1477,16 @@ function renderUserGrid(){
 function selectUser(idx){
   pinTargetUser = {...appUsers[idx], idx};
   pinBuffer = '';
-  updatePinDots();
   document.getElementById('peu-avatar').textContent = pinTargetUser.avatar || AVATARS[idx % AVATARS.length];
   document.getElementById('peu-name').textContent = pinTargetUser.name;
   document.getElementById('pin-error').textContent = '';
+  const pwdEl = document.getElementById('staff-pwd-input');
+  if(pwdEl){ pwdEl.value=''; pwdEl.type='password'; }
+  const eyeEl = document.getElementById('staff-eye');
+  if(eyeEl) eyeEl.textContent='👁️';
   document.getElementById('login-step1').style.display='none';
   document.getElementById('login-step2').style.display='block';
+  setTimeout(()=>{ if(pwdEl) pwdEl.focus(); }, 100);
 }
 
 function goLoginStep1(){
@@ -1476,43 +1496,43 @@ function goLoginStep1(){
   document.getElementById('pin-error').textContent='';
 }
 
-function pinPress(n){
-  if(!n) return;
-  if(pinBuffer.length>=4) return;
-  pinBuffer+=n;
-  updatePinDots();
-  if(pinBuffer.length===4) setTimeout(checkPin,200);
-}
-function pinBackspace(){ pinBuffer=pinBuffer.slice(0,-1); updatePinDots(); }
-function updatePinDots(){
-  for(let i=0;i<4;i++) document.getElementById('pd'+i).className='pin-dot'+(i<pinBuffer.length?' filled':'');
+// ===== STAFF PASSWORD LOGIN =====
+function togglePwdVisibility(inputId, eyeId){
+  const inp = document.getElementById(inputId);
+  const eye = document.getElementById(eyeId);
+  if(!inp) return;
+  if(inp.type==='password'){ inp.type='text'; if(eye) eye.textContent='🙈'; }
+  else { inp.type='password'; if(eye) eye.textContent='👁️'; }
 }
 
 function checkPin(){
-  if(!pinTargetUser){ pinBuffer=''; return; }
-  if(pinBuffer === pinTargetUser.pin){
-    // Login success
-    const now = new Date().toLocaleString('en-IN');
-    appUsers[pinTargetUser.idx].lastLogin = nowTimeStr()+' '+nowDateStr();
-    saveUsers();
-    const userRole = pinTargetUser.role || (pinTargetUser.isAdmin ? 'admin' : 'issuer');
-    currentUser = { 
-      name: pinTargetUser.name, 
-      avatar: pinTargetUser.avatar||AVATARS[pinTargetUser.idx%AVATARS.length], 
-      loginTime: now, 
-      role: userRole,
-      isAdmin: userRole === 'admin' || pinTargetUser.isAdmin === true
-    };
-    document.getElementById('login-screen').classList.add('hide');
-    updateLoggedBar();
-    applyRoleUI();
-    addAudit('login', `${currentUser.name} logged in as ${currentUser.role||'issuer'}`);
-    showToast(`Welcome, ${currentUser.name}! 👋`);
-    goLoginStep1();
-  } else {
-    document.getElementById('pin-error').textContent='❌ Wrong PIN. Try again.';
-    pinBuffer=''; updatePinDots();
+  if(!pinTargetUser) return;
+  const pwd = (document.getElementById('staff-pwd-input')?.value||'');
+  if(!pwd){ document.getElementById('pin-error').textContent='Please enter your password!'; return; }
+  if(pwd !== pinTargetUser.pin){
+    document.getElementById('pin-error').textContent='❌ Wrong password. Try again.';
+    document.getElementById('staff-pwd-input').value='';
+    return;
   }
+  // Login success
+  const now = new Date().toLocaleString('en-IN');
+  appUsers[pinTargetUser.idx].lastLogin = nowTimeStr()+' '+nowDateStr();
+  saveUsers();
+  const userRole = pinTargetUser.role || (pinTargetUser.isAdmin ? 'admin' : 'issuer');
+  currentUser = {
+    name: pinTargetUser.name,
+    avatar: pinTargetUser.avatar||AVATARS[pinTargetUser.idx%AVATARS.length],
+    loginTime: now,
+    role: userRole,
+    isAdmin: userRole==='admin' || pinTargetUser.isAdmin===true
+  };
+  document.getElementById('staff-pwd-input').value='';
+  document.getElementById('login-screen').classList.add('hide');
+  updateLoggedBar();
+  applyRoleUI();
+  addAudit('login', `${currentUser.name} logged in as ${currentUser.role||'issuer'}`);
+  showToast(`Welcome, ${currentUser.name}! 👋`);
+  goLoginStep1();
 }
 
 function updateLoggedBar(){
@@ -1551,17 +1571,20 @@ function logoutUser(){
   const sub = document.getElementById('emp-page-sub');
   if(sub) sub.textContent='Use the search bar above to filter by employee, tool, date';
 
-  // Show login screen — reset to Staff tab
+  // Show login screen — always show Employee Login only
   document.getElementById('login-screen').classList.remove('hide');
-  switchLoginTab('staff');
-  goLoginStep1();
+  document.getElementById('employee-login-section').style.display='';
+  document.getElementById('staff-login-section').style.display='none';
+  document.getElementById('emp-login-id').value='';
+  document.getElementById('emp-id-error').textContent='';
+  goEmpStep1();
   renderUserGrid();
 }
 
 // Init users — if no users, create a default one
 function initUsers(){
   if(!appUsers.length){
-    appUsers = [{ name:'Admin', pin:'1234', avatar:'👷', isAdmin:true, role:'admin' }];
+    appUsers = [{ name:'Admin', pin:'Admin@123', avatar:'👷', isAdmin:true, role:'admin' }];
     saveUsers();
   }
   renderUserGrid();
@@ -1623,10 +1646,10 @@ function startClock(){
   function tick(){
     const d=new Date();
     const ds=d.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-    const ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true});
+    const ts=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
     const ddEl=document.getElementById('dash-date'); if(ddEl) ddEl.textContent=ds+' | '+ts;
     const idEl=document.getElementById('i-date'); if(idEl) idEl.value=d.toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'});
-    const itEl=document.getElementById('i-time'); if(itEl) itEl.value=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+    const itEl=document.getElementById('i-time'); if(itEl) itEl.value=d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false});
   }
   tick(); setInterval(tick,1000);
 }
@@ -1638,6 +1661,36 @@ function highlight(text,q){
   if(i<0)return text;
   return text.slice(0,i)+'<mark>'+text.slice(i,i+q.length)+'</mark>'+text.slice(i+q.length);
 }
+// Employee ID-first search (ID type → Name auto-fill)
+function showEmpIdSuggestions(input, ddId){
+  const q = input.value.toLowerCase();
+  const dd = document.getElementById(ddId);
+  if(!q){ dd.classList.remove('show'); return; }
+  const matches = empMaster.filter(e=>
+    e.id.toLowerCase().includes(q) ||
+    e.name.toLowerCase().includes(q)
+  ).slice(0,8);
+  if(!matches.length){ dd.classList.remove('show'); return; }
+  dd.innerHTML = matches.map(e=>`
+    <div class="ac-item" onmousedown="selectEmpById('${e.id.replace(/'/g,"\\'")}','${e.name.replace(/'/g,"\\'")}')">
+      <span class="ac-code" style="font-size:.78rem">${highlight(e.id,q)}</span>
+      <span style="color:var(--text2);font-size:.78rem">${highlight(e.name,q)}</span>
+    </div>`).join('');
+  dd.classList.add('show');
+  // If exact match — auto-fill immediately
+  const exact = empMaster.find(e=>e.id.toLowerCase()===q);
+  if(exact){
+    selectEmpById(exact.id, exact.name);
+  }
+}
+
+function selectEmpById(id, name){
+  document.getElementById('i-empid').value = id;
+  document.getElementById('i-empname').value = name;
+  hideAC('ac-empid');
+}
+
+// Legacy name-search (kept for compatibility)
 function showEmpSuggestions(input,ddId){
   const q=input.value.toLowerCase();
   const dd=document.getElementById(ddId);
@@ -1762,7 +1815,7 @@ function addToolRow(){
       </div>
       <div class="field">
         <label>Tool Code <span class="auto-badge fill-badge">AUTO</span></label>
-        <input id="tr-code-${id}" type="text" placeholder="Auto-filled" readonly>
+        <input id="tr-code-${id}" type="text" placeholder="" readonly>
       </div>
       <div class="field">
         <label>Qty</label>
@@ -1830,12 +1883,13 @@ function issueToolSave(){
   const empId   = document.getElementById('i-empid').value.trim();
   const bookNo  = document.getElementById('i-bookno').value.trim();
   const pageNo  = document.getElementById('i-pageno').value.trim();
-  const shift   = document.getElementById('i-shift').value;
+  const shift   = '';
   const remarks = document.getElementById('i-remarks').value.trim();
   const issueDate = document.getElementById('i-date').value;
   const issueTime = document.getElementById('i-time').value;
 
-  if(!empName||!empId){showToast('Please enter employee details!','error');return;}
+  if(!empId){showToast('Please enter Employee ID!','error');return;}
+  if(!empName){showToast('Employee ID not found in master list!','error');return;}
   if(!bookNo||!pageNo){showToast('Please enter Book No and Page No!','error');return;}
 
   const tools = getToolRows();
@@ -1860,7 +1914,7 @@ function issueToolSave(){
     };
     records.push(rec);
     newIdxs.push(records.length-1);
-    addAudit('issue',`"${t.name}" issued to ${empName} (${empId}) — ${shift} shift`);
+    addAudit('issue',`"${t.name}" issued to ${empName} (${empId})`);
   });
 
   saveData();
@@ -1875,10 +1929,10 @@ function issueToolSave(){
 }
 
 function clearIssueForm(){
-  document.getElementById('i-empname').value='';
   document.getElementById('i-empid').value='';
+  document.getElementById('i-empname').value='';
   document.getElementById('i-remarks').value='';
-  hideAC('ac-empname');
+  hideAC('ac-empid');
   // Restore last used book/page
   const lastBook = localStorage.getItem('tc_last_bookno')||'';
   const lastPage = localStorage.getItem('tc_last_pageno')||'';
@@ -2529,7 +2583,7 @@ function downloadEmpExcel(){
 }
 function backupData(){
   const data={
-    version:'v5',
+    version:'v6',
     exported: new Date().toISOString(),
     records, empMaster, toolMaster, auditLog, appUsers
   };
@@ -2617,7 +2671,7 @@ function addUserManual(){
   const role=document.getElementById('new-userrole').value;
   const isAdminFlag = role==='admin' || document.getElementById('new-useradmin').checked;
   if(!name){showToast('Enter a name!','error');return;}
-  if(!/^\d{4}$/.test(pin)){showToast('PIN must be exactly 4 digits!','error');return;}
+  if(pin.length < 6){showToast('Password must be at least 6 characters!','error');return;}
   if(appUsers.find(u=>u.name.toLowerCase()===name.toLowerCase())){showToast('User already exists!','error');return;}
   const idx=appUsers.length;
   appUsers.push({name, pin, role, isAdmin: isAdminFlag, avatar: AVATARS[idx % AVATARS.length]});
@@ -2655,13 +2709,13 @@ function toggleAdmin(i){
 }
 
 function changeUserPin(i){
-  const newPin=prompt(`Enter new 4-digit PIN for "${appUsers[i].name}":`);
-  if(!newPin) return;
-  if(!/^\d{4}$/.test(newPin)){showToast('PIN must be 4 digits!','error');return;}
-  appUsers[i].pin=newPin; saveUsers();
+  const newPwd=prompt(`Enter new password for "${appUsers[i].name}" (min 6 chars):`);
+  if(!newPwd) return;
+  if(newPwd.length < 6){showToast('Password must be at least 6 characters!','error');return;}
+  appUsers[i].pin=newPwd; saveUsers();
   renderSettings();
-  addAudit('edit',`PIN changed for user "${appUsers[i].name}"`);
-  showToast(`PIN updated for ${appUsers[i].name}!`);
+  addAudit('edit',`Password changed for user "${appUsers[i].name}"`);
+  showToast(`Password updated for ${appUsers[i].name}!`);
 }
 
 function removeUser(i){
@@ -2883,15 +2937,40 @@ function removeTool(i){ toolMaster.splice(i,1); saveToolMaster(); renderSettings
 
 // ===== DOWNLOAD TEMPLATES =====
 function downloadTemplates(){
-  const empWs=XLSX.utils.aoa_to_sheet([['Employee Name','Employee ID'],['Rajesh Kumar','EMP-001'],['Priya Devi','EMP-002']]);
+  // Sheet 1: Employee Template
+  const empWs=XLSX.utils.aoa_to_sheet([
+    ['Employee Name','Employee ID'],
+    ['Rajesh Kumar','EMP-001'],
+    ['Priya Devi','EMP-002'],
+    ['Kumar Raja','EMP-003']
+  ]);
   empWs['!cols']=[{wch:25},{wch:15}];
-  const toolWs=XLSX.utils.aoa_to_sheet([['Tool Name','Tool Code'],['Vernier Caliper','VC-001'],['Micrometer','MC-002'],['Torque Wrench','TW-003']]);
+
+  // Sheet 2: Tool Master Template
+  const toolWs=XLSX.utils.aoa_to_sheet([
+    ['Tool Name','Tool Code'],
+    ['Vernier Caliper','VC-001'],
+    ['Micrometer','MC-002'],
+    ['Torque Wrench','TW-003'],
+    ['Digital Multimeter','DM-004']
+  ]);
   toolWs['!cols']=[{wch:30},{wch:15}];
+
+  // Sheet 3: SAP Import Template
+  const sapWs=XLSX.utils.aoa_to_sheet([
+    ['MaterialDocument','Posting date','Vendor No','Vendor Name','Sub Vendor Name','Material Code','Material Text','Movement Type','Quantity','Reference','Remarks'],
+    ['5000001234','01.03.2026','EMP-001','Rajesh Kumar','','VC-001','Vernier Caliper','311','1','REF-001',''],
+    ['5000001235','01.03.2026','EMP-001','Rajesh Kumar','','VC-001','Vernier Caliper','312','1','REF-001','Returned good condition'],
+    ['5000001236','02.03.2026','EMP-002','Priya Devi','','TW-003','Torque Wrench','311','2','REF-002',''],
+  ]);
+  sapWs['!cols']=[{wch:18},{wch:14},{wch:12},{wch:20},{wch:18},{wch:14},{wch:22},{wch:14},{wch:10},{wch:12},{wch:20}];
+
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,empWs,'Employee Template');
-  XLSX.utils.book_append_sheet(wb,toolWs,'Tool Template');
+  XLSX.utils.book_append_sheet(wb,toolWs,'Tool Master Template');
+  XLSX.utils.book_append_sheet(wb,sapWs,'SAP Import Template');
   XLSX.writeFile(wb,'ToolCrib_Templates.xlsx');
-  showToast('Templates downloaded!');
+  showToast('Templates downloaded! (3 sheets)');
 }
 
 // ===== EXCEL DOWNLOAD =====
@@ -2912,7 +2991,7 @@ function downloadExcel(){
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Tool Crib Records');
   const summary=[
-    ['Tool Crib Management v5 — Summary'],['Generated:',new Date().toLocaleString()],[''],
+    ['Tool Crib Management v6 — Summary'],['Generated:',new Date().toLocaleString()],[''],
     ['Total Records',records.length],
     ['Currently Issued',records.filter(r=>r.status==='Issued').length],
     ['Returned',records.filter(r=>r.status==='Returned').length],
