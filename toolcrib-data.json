@@ -1,0 +1,50 @@
+{
+  "records": [],
+  "empMaster": [],
+  "toolMaster": [],
+  "auditLog": [
+    {
+      "type": "login",
+      "msg": "Admin logged in as admin",
+      "user": "Admin",
+      "time": "26/3/2026, 6:37:14 am"
+    },
+    {
+      "type": "login",
+      "msg": "Admin logged in as admin",
+      "user": "Admin",
+      "time": "26/3/2026, 6:36:07 am"
+    },
+    {
+      "type": "login",
+      "msg": "Admin logged in as admin",
+      "user": "Admin",
+      "time": "22/3/2026, 9:44:30 am"
+    },
+    {
+      "type": "lock",
+      "msg": "Admin logged out",
+      "user": "Admin",
+      "time": "21/3/2026, 6:03:43 pm"
+    },
+    {
+      "type": "login",
+      "msg": "Admin logged in as admin",
+      "user": "Admin",
+      "time": "21/3/2026, 6:03:01 pm"
+    }
+  ],
+  "appUsers": [
+    {
+      "name": "Admin",
+      "pin": "Admin@123",
+      "avatar": "👷",
+      "isAdmin": true,
+      "role": "admin",
+      "lastLogin": "06:37 26/03/2026"
+    }
+  ],
+  "empPins": {},
+  "overdueHrs": 24,
+  "savedAt": "2026-03-26T01:07:52.655Z"
+}
