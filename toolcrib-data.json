@@ -14,6 +14,12 @@
   ],
   "auditLog": [
     {
+      "type": "login",
+      "msg": "Vijay logged in as admin",
+      "user": "Vijay",
+      "time": "26/3/2026, 6:48:37 am"
+    },
+    {
       "type": "edit",
       "msg": "Employee password reset for \"Vijayapandian\" (4261)",
       "user": "Vijay",
@@ -81,10 +87,10 @@
       "role": "admin",
       "isAdmin": true,
       "avatar": "👷",
-      "lastLogin": "06:40 26/03/2026"
+      "lastLogin": "06:48 26/03/2026"
     }
   ],
   "empPins": {},
   "overdueHrs": 24,
-  "savedAt": "2026-03-26T01:12:03.355Z"
+  "savedAt": "2026-03-26T01:19:01.946Z"
 }
