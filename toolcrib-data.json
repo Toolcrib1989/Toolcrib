@@ -1,8 +1,36 @@
 {
   "records": [],
-  "empMaster": [],
-  "toolMaster": [],
+  "empMaster": [
+    {
+      "name": "Vijayapandian",
+      "id": "4261"
+    }
+  ],
+  "toolMaster": [
+    {
+      "name": "2LB HAMMER",
+      "code": "G2403586"
+    }
+  ],
   "auditLog": [
+    {
+      "type": "edit",
+      "msg": "Employee password reset for \"Vijayapandian\" (4261)",
+      "user": "Vijay",
+      "time": "26/3/2026, 6:41:29 am"
+    },
+    {
+      "type": "login",
+      "msg": "Vijay logged in as admin",
+      "user": "Vijay",
+      "time": "26/3/2026, 6:40:00 am"
+    },
+    {
+      "type": "lock",
+      "msg": "Admin logged out",
+      "user": "Admin",
+      "time": "26/3/2026, 6:39:45 am"
+    },
     {
       "type": "edit",
       "msg": "New user \"Vijay\" added as admin",
@@ -52,10 +80,11 @@
       "pin": "Vijay@2026",
       "role": "admin",
       "isAdmin": true,
-      "avatar": "👷"
+      "avatar": "👷",
+      "lastLogin": "06:40 26/03/2026"
     }
   ],
   "empPins": {},
   "overdueHrs": 24,
-  "savedAt": "2026-03-26T01:09:12.049Z"
+  "savedAt": "2026-03-26T01:12:03.355Z"
 }
