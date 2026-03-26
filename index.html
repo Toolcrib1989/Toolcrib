@@ -569,6 +569,9 @@ tr:hover td{background:#f8fafc;}
     <div class="user-select-wrap" id="login-step1">
       <h3>Select your account</h3>
       <div class="user-grid" id="user-grid-list"></div>
+      <div style="text-align:center;margin-top:1rem;">
+        <span onclick="backToEmployeeLogin()" style="font-size:.75rem;color:rgba(255,255,255,.5);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">← Back</span>
+      </div>
     </div>
     <!-- Step 2: Enter Password -->
     <div class="pin-entry-wrap" id="login-step2" style="display:none">
@@ -601,7 +604,7 @@ tr:hover td{background:#f8fafc;}
     <div class="emp-login-wrap" id="emp-step1">
       <div class="emp-id-box">
         <h4>👷 Enter your Employee ID</h4>
-        <input type="text" class="emp-id-input" id="emp-login-id" placeholder="Employee ID (e.g. EMP-001)"
+<input type="text" class="emp-id-input" id="emp-login-id" placeholder="Employee ID (e.g. EMP-001)"
           autocomplete="off" onkeydown="if(event.key==='Enter')empCheckId()">
         <button class="emp-id-btn" onclick="empCheckId()">Next →</button>
         <div class="pin-error" id="emp-id-error" style="margin-top:.5rem"></div>
@@ -740,10 +743,26 @@ tr:hover td{background:#f8fafc;}
           onblur="setTimeout(()=>hideAC('ac-empid'),200)">
         <div class="ac-dropdown" id="ac-empid"></div>
       </div>
-      <div class="field">
+      <div class="field ac-wrap">
         <label>Employee Name</label>
-        <input id="i-empname" type="text" placeholder="" readonly>
+        <input id="i-empname" type="text" placeholder="Search by name..." autocomplete="off"
+          oninput="showEmpNameSuggestions(this,'ac-empname2')"
+          onkeydown="acKeyNav(event,'ac-empname2','empname')"
+          onblur="setTimeout(()=>hideAC('ac-empname2'),200)">
+        <div class="ac-dropdown" id="ac-empname2"></div>
       </div>
+      <div class="field ac-wrap" style="grid-column:1/-1">
+        <label>Sub-Name <span style="font-size:.68rem;color:var(--text2);font-weight:400">(Contract worker name — optional)</span></label>
+        <input id="i-subname" type="text" placeholder="e.g. Suresh (contractor under above vendor)" autocomplete="off"
+          oninput="showSubNameSuggestions(this,'ac-subname')"
+          onkeydown="acKeyNav(event,'ac-subname','subname')"
+          onblur="setTimeout(()=>hideAC('ac-subname'),200)">
+        <div class="ac-dropdown" id="ac-subname"></div>
+      </div>
+    </div>
+
+    <!-- COMMON FIELDS -->
+    <div class="form-grid" style="margin-top:.5rem">
       <div class="field">
         <label>Book No</label>
         <input id="i-bookno" type="text" placeholder="e.g. BK-001" autocomplete="off">
@@ -752,7 +771,6 @@ tr:hover td{background:#f8fafc;}
         <label>Page No</label>
         <input id="i-pageno" type="text" placeholder="e.g. 42" autocomplete="off">
       </div>
-
       <div class="field"><label>Issue Date</label><input id="i-date" type="text" readonly></div>
       <div class="field"><label>Issue Time</label><input id="i-time" type="text" readonly></div>
     </div>
@@ -775,8 +793,8 @@ tr:hover td{background:#f8fafc;}
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date</th><th>Issue Time</th><th>Status</th><th>Actions</th></tr></thead>
-        <tbody id="issued-tbody"><tr class="empty-row"><td colspan="13">No currently issued tools.</td></tr></tbody>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Sub-Name</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date</th><th>Issue Time</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="issued-tbody"><tr class="empty-row"><td colspan="14">No currently issued tools.</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -837,8 +855,8 @@ tr:hover td{background:#f8fafc;}
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date</th><th>Issue Time</th><th>Return Date</th><th>Return Time</th><th>Status</th><th>Condition</th><th>Remarks</th><th>Actions</th></tr></thead>
-        <tbody id="master-tbody"><tr class="empty-row"><td colspan="17">No records found.</td></tr></tbody>
+        <thead><tr><th>#</th><th>Employee</th><th>Emp ID</th><th>Sub-Name</th><th>Tool Name</th><th>Tool Code</th><th>Book No</th><th>Page No</th><th>Qty</th><th>Shift</th><th>Issue Date</th><th>Issue Time</th><th>Return Date</th><th>Return Time</th><th>Status</th><th>Condition</th><th>Remarks</th><th>Actions</th></tr></thead>
+        <tbody id="master-tbody"><tr class="empty-row"><td colspan="18">No records found.</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -1084,6 +1102,42 @@ tr:hover td{background:#f8fafc;}
       <div id="sap-import-result" style="margin-top:.75rem;display:none"></div>
     </div>
 
+    <!-- GITHUB SYNC -->
+    <div class="settings-card" style="grid-column:1/-1">
+      <h3>🔄 GitHub Data Sync</h3>
+      <p style="margin-bottom:.8rem">All data automatically syncs to your GitHub repository — accessible from any device!</p>
+      <div id="gh-config-section">
+        <div class="form-grid" style="margin-bottom:.8rem">
+          <div class="field">
+            <label>GitHub Token</label>
+            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx" style="font-family:'JetBrains Mono',monospace;font-size:.78rem">
+          </div>
+          <div class="field">
+            <label>GitHub Username</label>
+            <input type="text" id="gh-owner" placeholder="e.g. toolcrib1989">
+          </div>
+          <div class="field">
+            <label>Repository Name</label>
+            <input type="text" id="gh-repo" placeholder="e.g. Toolcrib">
+          </div>
+          <div class="field">
+            <label>Data File Name</label>
+            <input type="text" id="gh-file" placeholder="toolcrib-data.json">
+          </div>
+        </div>
+        <div class="btn-row" style="flex-wrap:wrap;gap:.5rem">
+          <button class="btn btn-primary" onclick="ghSaveConfig()">💾 Save Config</button>
+          <button class="btn btn-teal" onclick="ghPush()">⬆️ Push to GitHub</button>
+          <button class="btn btn-info" onclick="ghPull(false)">⬇️ Pull from GitHub</button>
+          <button class="btn btn-outline" onclick="ghClearConfig()" style="color:var(--danger)">🗑️ Clear Config</button>
+        </div>
+        <div style="margin-top:.7rem;font-size:.72rem;color:var(--text2);font-family:'JetBrains Mono',monospace" id="gh-sync-status"></div>
+      </div>
+      <div style="margin-top:.8rem;background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:.7rem 1rem;font-size:.73rem;color:#92400e;">
+        ⚠️ <b>How to get Token:</b> GitHub.com → Settings → Developer Settings → Personal Access Tokens → Tokens (classic) → Generate → Select <b>repo</b> scope → Copy token
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1262,26 +1316,45 @@ function switchLoginTab(tab){
 function empCheckId(){
   const rawId = document.getElementById('emp-login-id').value.trim();
 
-  // Secret keyword — exact match "Admin" (case-sensitive)
+  // Secret keywords (case-sensitive)
   if(rawId === 'Admin'){
     document.getElementById('emp-login-id').value='';
     document.getElementById('emp-id-error').textContent='';
-    // Show staff login
     document.getElementById('employee-login-section').style.display='none';
     document.getElementById('staff-login-section').style.display='';
-    renderUserGrid();
+    renderUserGrid('admin'); // Admin cards only
+    return;
+  }
+  if(rawId === 'Staff'){
+    document.getElementById('emp-login-id').value='';
+    document.getElementById('emp-id-error').textContent='';
+    document.getElementById('employee-login-section').style.display='none';
+    document.getElementById('staff-login-section').style.display='';
+    renderUserGrid('staff'); // Issuer + Viewer cards only
     return;
   }
 
   const id = rawId.toUpperCase();
   if(!id){ document.getElementById('emp-id-error').textContent='Please enter your Employee ID!'; return; }
-  const emp = empMaster.find(e=>e.id.toUpperCase()===id || e.id===rawId);
-  if(!emp){ document.getElementById('emp-id-error').textContent='❌ Employee ID not found. Please check with Admin.'; return; }
+
+  // Find employee or vendor
+  let emp = empMaster.find(e=>e.id.toUpperCase()===id || e.id===rawId);
+
+  // If not found as exact ID, check if it's a vendor code (multiple entries with same ID)
+  if(!emp){
+    document.getElementById('emp-id-error').textContent='❌ Employee / Vendor ID not found. Please check with Admin.';
+    return;
+  }
+
+  // Check if vendor (multiple employees share this ID)
+  const isVendor = empMaster.filter(e=>e.id===emp.id).length > 1;
+  const displayName = isVendor ? `${emp.name} (Vendor Team)` : emp.name;
+
   const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
   const hasPin = !!empPins[emp.id];
-  empLoginTarget = { id: emp.id, name: emp.name, isNewPin: !hasPin, confirmPin: null };
-  document.getElementById('emp-peu-avatar').textContent='👷';
-  document.getElementById('emp-peu-name').textContent = emp.name;
+  empLoginTarget = { id: emp.id, name: displayName, isNewPin: !hasPin, confirmPin: null, isVendor };
+  document.getElementById('emp-peu-avatar').textContent = isVendor ? '🏭' : '👷';
+  document.getElementById('emp-peu-name').textContent = displayName;
   document.getElementById('emp-pin-subtitle').textContent = hasPin
     ? 'Enter your password'
     : '🆕 Create a new password (min 6 chars)';
@@ -1308,48 +1381,54 @@ function goEmpStep1(){
 // ===== EMPLOYEE PASSWORD LOGIN =====
 function empCheckPin(){
   if(!empLoginTarget) return;
-  const pwd = (document.getElementById('emp-pwd-input')?.value||'');
-  if(!pwd){ document.getElementById('emp-pin-error').textContent='Please enter a password!'; return; }
-
   const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
 
   if(empLoginTarget.isNewPin){
-    // First time — need confirm
-    if(pwd.length < 6){
-      document.getElementById('emp-pin-error').textContent='❌ Password must be at least 6 characters!';
-      return;
-    }
-    if(!empLoginTarget.confirmPwd){
-      // Store first entry, show confirm field
+    // Check if we're in confirm step (confirm wrap visible)
+    const confirmWrap = document.getElementById('emp-pwd-confirm-wrap');
+    const isConfirmStep = confirmWrap && confirmWrap.style.display !== 'none';
+
+    if(isConfirmStep){
+      // Confirm step — read from confirm field
+      const confirmPwd = (document.getElementById('emp-pwd-confirm')?.value||'');
+      if(!confirmPwd){ document.getElementById('emp-pin-error').textContent='Please confirm your password!'; return; }
+      if(confirmPwd !== empLoginTarget.confirmPwd){
+        document.getElementById('emp-pin-error').textContent='❌ Passwords do not match! Try again.';
+        empLoginTarget.confirmPwd = null;
+        document.getElementById('emp-pwd-confirm').value='';
+        document.getElementById('emp-pwd-input').value='';
+        document.getElementById('emp-pwd-input').style.display='';
+        confirmWrap.style.display='none';
+        document.getElementById('emp-pin-subtitle').textContent='🆕 Create a new password (min 6 chars)';
+        return;
+      }
+      // Passwords match — save and login
+      empPins[empLoginTarget.id] = empLoginTarget.confirmPwd;
+      localStorage.setItem('tc_emp_pins', JSON.stringify(empPins));
+      document.getElementById('emp-pwd-input').value='';
+      document.getElementById('emp-pwd-confirm').value='';
+      empLoginSuccess();
+    } else {
+      // First step — read from main field
+      const pwd = (document.getElementById('emp-pwd-input')?.value||'');
+      if(!pwd){ document.getElementById('emp-pin-error').textContent='Please enter a password!'; return; }
+      if(pwd.length < 6){
+        document.getElementById('emp-pin-error').textContent='❌ Password must be at least 6 characters!';
+        return;
+      }
+      // Store and show confirm field
       empLoginTarget.confirmPwd = pwd;
       document.getElementById('emp-pwd-input').value='';
       document.getElementById('emp-pin-subtitle').textContent='🔁 Confirm your password';
-      document.getElementById('emp-pwd-confirm-wrap').style.display='';
+      confirmWrap.style.display='';
       document.getElementById('emp-pwd-input').style.display='none';
       document.getElementById('emp-pin-error').textContent='';
-      document.getElementById('emp-pwd-confirm').focus();
-      return;
+      setTimeout(()=>document.getElementById('emp-pwd-confirm').focus(), 100);
     }
-    // Confirm step
-    const confirmPwd = (document.getElementById('emp-pwd-confirm')?.value||'');
-    if(confirmPwd !== empLoginTarget.confirmPwd){
-      document.getElementById('emp-pin-error').textContent='❌ Passwords do not match! Try again.';
-      empLoginTarget.confirmPwd = null;
-      document.getElementById('emp-pwd-confirm').value='';
-      document.getElementById('emp-pwd-input').value='';
-      document.getElementById('emp-pwd-input').style.display='';
-      document.getElementById('emp-pwd-confirm-wrap').style.display='none';
-      document.getElementById('emp-pin-subtitle').textContent='🆕 Create a new password (min 6 chars)';
-      return;
-    }
-    // Save password
-    empPins[empLoginTarget.id] = empLoginTarget.confirmPwd;
-    localStorage.setItem('tc_emp_pins', JSON.stringify(empPins));
-    document.getElementById('emp-pwd-input').value='';
-    document.getElementById('emp-pwd-confirm').value='';
-    empLoginSuccess();
   } else {
     // Existing password check
+    const pwd = (document.getElementById('emp-pwd-input')?.value||'');
+    if(!pwd){ document.getElementById('emp-pin-error').textContent='Please enter your password!'; return; }
     if(pwd !== empPins[empLoginTarget.id]){
       document.getElementById('emp-pin-error').textContent='❌ Wrong password. Try again.';
       document.getElementById('emp-pwd-input').value='';
@@ -1416,26 +1495,34 @@ function applyRoleUI(){
     // Update page subtitle
     const sub = document.getElementById('emp-page-sub');
     if(sub) sub.textContent = employee
-      ? `${currentUser.name} (${currentUser.empId}) — Your Records`
+      ? `${currentUser.name} (${currentUser.empId}) — Pending Tools`
       : 'Use the search bar above to filter';
 
     // Navigate via goPage — handles page switch + search bar + render
     goPage('employee');
 
-  } else {
-    // Admin / Issuer — restore all nav items
-    document.querySelectorAll('.nav-item').forEach(el=>el.style.display='');
+  } else if(role === 'issuer'){
+    // Issuer — limited nav: Dashboard, Issue, Return, Overdue, Employee History only
+    const issuerPages = ['dashboard','issue','return','overdue','employee'];
+    document.querySelectorAll('.nav-item').forEach(el=>{
+      const onclick = el.getAttribute('onclick')||'';
+      const show = issuerPages.some(p=>onclick.includes("'"+p+"'"));
+      el.style.display = show ? '' : 'none';
+    });
     document.querySelectorAll('.nav-sec').forEach(el=>el.style.display='');
-
-    // Hide employee action buttons
     const actionBtns = document.getElementById('emp-action-btns');
     if(actionBtns) actionBtns.style.display='none';
-
-    // Reset employee page subtitle
     const sub = document.getElementById('emp-page-sub');
-    if(sub) sub.textContent='Use the search bar above to filter by employee, tool, date';
-
-    // Go to Dashboard — nav auto-activates
+    if(sub) sub.textContent='Search by employee name, ID or tool';
+    goPage('dashboard');
+  } else {
+    // Admin — full access
+    document.querySelectorAll('.nav-item').forEach(el=>el.style.display='');
+    document.querySelectorAll('.nav-sec').forEach(el=>el.style.display='');
+    const actionBtns = document.getElementById('emp-action-btns');
+    if(actionBtns) actionBtns.style.display='none';
+    const sub = document.getElementById('emp-page-sub');
+    if(sub) sub.textContent='Search by employee name, ID or tool';
     goPage('dashboard');
   }
 }
@@ -1458,16 +1545,32 @@ function canAccessSettings(){
 }
 const AVATARS = ['👷','🧑‍🔧','👨‍💼','👩‍💼','🧑‍💻','👨‍🔬','👩‍🔧','🧑‍🏭'];
 
-function renderUserGrid(){
+function renderUserGrid(type){
   const grid = document.getElementById('user-grid-list');
   if(!appUsers.length){
     grid.innerHTML=`<div class="no-users-msg">No users yet.<br>Add users in Settings.</div>`;
     return;
   }
-  grid.innerHTML = appUsers.map((u,i)=>{
+  // Filter by type
+  let filtered = appUsers.map((u,i)=>({...u,_idx:i}));
+  if(type==='admin'){
+    filtered = filtered.filter(u=>u.role==='admin'||u.isAdmin===true);
+  } else if(type==='staff'){
+    filtered = filtered.filter(u=>u.role==='issuer'||u.role==='viewer');
+  }
+  if(!filtered.length){
+    const msg = type==='admin'
+      ? 'No Admin users found.<br>Add a user with Admin role in Settings.'
+      : type==='staff'
+      ? 'No Issuer/Viewer users found.<br>Add a user with Issuer role in Settings.'
+      : 'No users found.';
+    grid.innerHTML=`<div class="no-users-msg">${msg}</div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(u=>{
     const last = u.lastLogin ? u.lastLogin : 'Never';
-    return `<div class="user-card" onclick="selectUser(${i})">
-      <div class="uc-avatar">${u.avatar||AVATARS[i%AVATARS.length]}</div>
+    return `<div class="user-card" onclick="selectUser(${u._idx})">
+      <div class="uc-avatar">${u.avatar||AVATARS[u._idx%AVATARS.length]}</div>
       <div class="uc-name">${u.name}</div>
       <div class="uc-last">${last}</div>
     </div>`;
@@ -1487,6 +1590,14 @@ function selectUser(idx){
   document.getElementById('login-step1').style.display='none';
   document.getElementById('login-step2').style.display='block';
   setTimeout(()=>{ if(pwdEl) pwdEl.focus(); }, 100);
+}
+
+function backToEmployeeLogin(){
+  document.getElementById('staff-login-section').style.display='none';
+  document.getElementById('employee-login-section').style.display='';
+  document.getElementById('emp-login-id').value='';
+  document.getElementById('emp-id-error').textContent='';
+  goEmpStep1();
 }
 
 function goLoginStep1(){
@@ -1509,6 +1620,34 @@ function checkPin(){
   if(!pinTargetUser) return;
   const pwd = (document.getElementById('staff-pwd-input')?.value||'');
   if(!pwd){ document.getElementById('pin-error').textContent='Please enter your password!'; return; }
+
+  // Emergency Reset — exact "RESET" keyword
+  if(pwd === 'RESET'){
+    const idx = pinTargetUser.idx;
+    appUsers[idx].pin = 'Admin@123';
+    saveUsers();
+    document.getElementById('staff-pwd-input').value='';
+    document.getElementById('pin-error').textContent='';
+    addAudit('edit', `Emergency reset: "${pinTargetUser.name}" password reset to Admin@123`);
+    showToast(`🔑 Password reset to "Admin@123" — Please change it immediately after login!`);
+    // Auto login after reset
+    const now = new Date().toLocaleString('en-IN');
+    appUsers[idx].lastLogin = nowTimeStr()+' '+nowDateStr();
+    saveUsers();
+    const userRole = pinTargetUser.role || (pinTargetUser.isAdmin ? 'admin' : 'issuer');
+    currentUser = {
+      name: pinTargetUser.name,
+      avatar: pinTargetUser.avatar||AVATARS[idx%AVATARS.length],
+      loginTime: now,
+      role: userRole,
+      isAdmin: userRole==='admin' || pinTargetUser.isAdmin===true
+    };
+    document.getElementById('login-screen').classList.add('hide');
+    updateLoggedBar();
+    applyRoleUI();
+    return;
+  }
+
   if(pwd !== pinTargetUser.pin){
     document.getElementById('pin-error').textContent='❌ Wrong password. Try again.';
     document.getElementById('staff-pwd-input').value='';
@@ -1789,7 +1928,131 @@ function shiftBadge(s){
 }
 
 // ===== ISSUE =====
-// ===== MULTI-TOOL ISSUE =====
+// ===== ISSUE MODE TOGGLE =====
+let issueMode = 'employee'; // 'employee' or 'vendor'
+
+function setIssueMode(mode){
+  issueMode = mode;
+  document.getElementById('emp-mode-fields').style.display = mode==='employee' ? '' : 'none';
+  document.getElementById('vendor-mode-fields').style.display = mode==='vendor' ? '' : 'none';
+  document.getElementById('mode-emp-btn').className = mode==='employee' ? 'btn btn-primary' : 'btn btn-outline';
+  document.getElementById('mode-vendor-btn').className = mode==='vendor' ? 'btn btn-primary' : 'btn btn-outline';
+  document.getElementById('mode-emp-btn').style.fontSize = '.78rem';
+  document.getElementById('mode-emp-btn').style.padding = '.42rem 1rem';
+  document.getElementById('mode-vendor-btn').style.fontSize = '.78rem';
+  document.getElementById('mode-vendor-btn').style.padding = '.42rem 1rem';
+  // Clear fields
+  if(mode==='employee'){
+    document.getElementById('i-empid').value='';
+    document.getElementById('i-empname').value='';
+  } else {
+    document.getElementById('i-vendorid').value='';
+    document.getElementById('i-vendorname').value='';
+    document.getElementById('i-workername').value='';
+  }
+}
+
+// ===== BI-DIRECTIONAL EMPLOYEE SEARCH =====
+function showEmpBiSearch(input, ddId){
+  const q = input.value.toLowerCase().trim();
+  const dd = document.getElementById(ddId);
+  if(!q){ dd.classList.remove('show'); return; }
+  // Filter unique employees (exclude vendor groups - those with duplicate IDs)
+  const vendorIds = new Set(
+    Object.entries(empMaster.reduce((acc,e)=>{ acc[e.id]=(acc[e.id]||0)+1; return acc; },{}))
+      .filter(([,c])=>c>1).map(([id])=>id)
+  );
+  const uniqueEmps = empMaster.filter(e=>!vendorIds.has(e.id));
+  const matches = uniqueEmps.filter(e=>
+    e.id.toLowerCase().includes(q) || e.name.toLowerCase().includes(q)
+  ).slice(0,8);
+  if(!matches.length){ dd.classList.remove('show'); return; }
+  dd.innerHTML = matches.map(e=>`
+    <div class="ac-item" onmousedown="selectEmpBi('${e.id.replace(/'/g,"\\'")}','${e.name.replace(/'/g,"\\'")}')">
+      <span class="ac-code" style="font-size:.78rem">${e.id}</span>
+      <span style="color:var(--text2);font-size:.78rem">${e.name}</span>
+    </div>`).join('');
+  dd.classList.add('show');
+}
+
+function selectEmpBi(id, name){
+  document.getElementById('i-empid').value = id;
+  document.getElementById('i-empname').value = name;
+  hideAC('ac-empid');
+  hideAC('ac-empname2');
+}
+
+// ===== BI-DIRECTIONAL VENDOR SEARCH =====
+function getVendorMap(){
+  // Vendors = IDs that appear more than once in empMaster
+  const countMap = {};
+  empMaster.forEach(e=>{ countMap[e.id]=(countMap[e.id]||0)+1; });
+  const vendorMap = {}; // id → name (first entry)
+  empMaster.forEach(e=>{
+    if(countMap[e.id]>1 && !vendorMap[e.id]) vendorMap[e.id]=e.name;
+  });
+  return vendorMap;
+}
+
+function showVendorBiSearch(input, ddId){
+  const q = input.value.toLowerCase().trim();
+  const dd = document.getElementById(ddId);
+  if(!q){ dd.classList.remove('show'); return; }
+  const vendorMap = getVendorMap();
+  const matches = Object.entries(vendorMap).filter(([id,name])=>
+    id.toLowerCase().includes(q) || name.toLowerCase().includes(q)
+  ).slice(0,8);
+  if(!matches.length){ dd.classList.remove('show'); return; }
+  dd.innerHTML = matches.map(([id,name])=>`
+    <div class="ac-item" onmousedown="selectVendorBi('${id.replace(/'/g,"\\'")}','${name.replace(/'/g,"\\'")}')">
+      <span class="ac-code" style="font-size:.78rem">${id}</span>
+      <span style="color:var(--text2);font-size:.78rem">${name}</span>
+    </div>`).join('');
+  dd.classList.add('show');
+  // Exact match auto-fill
+  const exact = Object.entries(vendorMap).find(([id,name])=>
+    id.toLowerCase()===q || name.toLowerCase()===q
+  );
+  if(exact) selectVendorBi(exact[0], exact[1]);
+}
+
+function selectVendorBi(id, name){
+  document.getElementById('i-vendorid').value = id;
+  document.getElementById('i-vendorname').value = name;
+  hideAC('ac-vendorid');
+  hideAC('ac-vendorname2');
+  document.getElementById('i-workername').value='';
+  setTimeout(()=>document.getElementById('i-workername').focus(), 100);
+}
+
+// ===== WORKER NAME SUGGESTIONS =====
+function showWorkerSuggestions(input, ddId){
+  const q = input.value.toLowerCase();
+  const dd = document.getElementById(ddId);
+  const vendorId = document.getElementById('i-vendorid').value.trim();
+  if(!q){ dd.classList.remove('show'); return; }
+  let workers = vendorId ? empMaster.filter(e=>e.id===vendorId) : empMaster;
+  const matches = workers.filter(e=>e.name.toLowerCase().includes(q)).slice(0,8);
+  if(!matches.length){ dd.classList.remove('show'); return; }
+  dd.innerHTML = matches.map(e=>`
+    <div class="ac-item" onmousedown="selectWorker('${e.name.replace(/'/g,"\\'")}')">
+      <span>${highlight(e.name,q)}</span>
+    </div>`).join('');
+  dd.classList.add('show');
+}
+
+function selectWorker(name){
+  document.getElementById('i-workername').value = name;
+  hideAC('ac-workername');
+}
+
+// Legacy — kept for compatibility
+function showVendorSuggestions(input, ddId){ showVendorBiSearch(input, ddId); }
+function selectVendor(id, name){ selectVendorBi(id, name); }
+function showEmpIdSuggestions(input, ddId){ showEmpBiSearch(input, ddId); }
+function selectEmpById(id, name){ selectEmpBi(id, name); }
+
+// ===== ISSUE TOOL SAVE — VENDOR MODE =====
 let toolRowCount = 0;
 
 function addToolRow(){
@@ -1879,8 +2142,20 @@ function getToolRows(){
 
 function issueToolSave(){
   if(!canIssue()) return;
-  const empName = document.getElementById('i-empname').value.trim();
+
   const empId   = document.getElementById('i-empid').value.trim();
+  const empName = document.getElementById('i-empname').value.trim();
+  const subName = (document.getElementById('i-subname')?.value||'').trim();
+
+  if(!empId){ showToast('Please enter Employee ID!','error'); return; }
+  if(!empName){ showToast('Employee ID not found in master list!','error'); return; }
+
+  // Final name: if subname given, use "SubName (EmpName)"
+  const finalName = subName ? subName + ' (' + empName + ')' : empName;
+  // Use subname as empName for records, keep empId same
+  let empName2 = finalName;
+  let empId2 = empId;
+
   const bookNo  = document.getElementById('i-bookno').value.trim();
   const pageNo  = document.getElementById('i-pageno').value.trim();
   const shift   = '';
@@ -1888,8 +2163,6 @@ function issueToolSave(){
   const issueDate = document.getElementById('i-date').value;
   const issueTime = document.getElementById('i-time').value;
 
-  if(!empId){showToast('Please enter Employee ID!','error');return;}
-  if(!empName){showToast('Employee ID not found in master list!','error');return;}
   if(!bookNo||!pageNo){showToast('Please enter Book No and Page No!','error');return;}
 
   const tools = getToolRows();
@@ -1905,7 +2178,7 @@ function issueToolSave(){
   const newIdxs = [];
   tools.forEach(t=>{
     const rec = {
-      empName, empId,
+      empName: empName2, empId: empId2, subName: subName,
       toolName: t.name, toolCode: t.code,
       bookNo, pageNo, qty: t.qty, shift, remarks,
       issueDate, issueTime, issueDateISO: todayISO(),
@@ -1922,7 +2195,7 @@ function issueToolSave(){
   renderIssued();
   updateDashboard();
   renderRecent();
-  showToast(`${tools.length} tool${tools.length>1?'s':''} issued to ${empName}!`);
+  showToast(`${tools.length} tool${tools.length>1?'s':''} issued to ${empName2}!`);
 
   // Open multi-tool slip
   openMultiSlipModal(newIdxs);
@@ -1931,8 +2204,10 @@ function issueToolSave(){
 function clearIssueForm(){
   document.getElementById('i-empid').value='';
   document.getElementById('i-empname').value='';
+  const sub = document.getElementById('i-subname');
+  if(sub) sub.value='';
   document.getElementById('i-remarks').value='';
-  hideAC('ac-empid');
+  hideAC('ac-empid'); hideAC('ac-empname2'); hideAC('ac-subname');
   // Restore last used book/page
   const lastBook = localStorage.getItem('tc_last_bookno')||'';
   const lastPage = localStorage.getItem('tc_last_pageno')||'';
@@ -1949,12 +2224,13 @@ function renderIssued(){
   const tbody=document.getElementById('issued-tbody');
   const issued=records.map((r,i)=>({...r,idx:i})).filter(r=>r.status==='Issued');
   const f=q?issued.filter(r=>r.empName.toLowerCase().includes(q)||r.empId.toLowerCase().includes(q)||r.toolName.toLowerCase().includes(q)||(r.toolCode||'').toLowerCase().includes(q)):issued;
-  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="13">No currently issued tools.</td></tr>';return;}
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="14">No currently issued tools.</td></tr>';return;}
   tbody.innerHTML=f.map((r,i)=>`
     <tr ${isOverdue(r)?'style="background:#fff5f5"':''}>
       <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
       <td><b>${r.empName}</b></td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td style="font-size:.76rem;color:var(--text2)">${r.subName||'—'}</td>
       <td>${r.toolName}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo}</td>
@@ -2055,12 +2331,13 @@ function renderMaster(){
   if(ffrom) f=f.filter(r=>r.issueDateISO>=ffrom);
   if(fto) f=f.filter(r=>r.issueDateISO<=fto);
   document.getElementById('master-count').textContent=`(${f.length} records)`;
-  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="17">No records found.</td></tr>';return;}
+  if(!f.length){tbody.innerHTML='<tr class="empty-row"><td colspan="18">No records found.</td></tr>';return;}
   tbody.innerHTML=f.map((r,i)=>`
     <tr ${isOverdue(r)?'style="background:#fff5f5"':''}>
       <td style="color:var(--text2);font-size:.73rem">${i+1}</td>
       <td><b>${r.empName}</b></td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.empId}</td>
+      <td style="font-size:.76rem;color:var(--text2)">${r.subName||'—'}</td>
       <td>${r.toolName}${r.sapImport?'<span class="auto-badge" style="background:#f0fdf4;color:#166534;margin-left:.3rem">SAP</span>':''}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.toolCode||'—'}</td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.76rem">${r.bookNo||'—'}</td>
@@ -2249,11 +2526,12 @@ function renderEmpHistory(){
   let f = records.map((r,i)=>({...r,idx:i}));
 
   if(isEmpRole && currentUser?.empId){
-    // Employee — show only own records automatically
-    f = f.filter(r=>r.empId===currentUser.empId);
-    renderEmpSelfStats(f);
+    // Employee — show only their OWN PENDING (not returned) tools
+    const allMine = f.filter(r=>r.empId===currentUser.empId);
+    f = allMine.filter(r=>r.status==='Issued');
+    renderEmpSelfStats(allMine);
     const cnt = document.getElementById('emp-result-count');
-    if(cnt) cnt.textContent='';
+    if(cnt) cnt.textContent = f.length ? `${f.length} pending tool${f.length>1?'s':''}` : '';
   } else {
     // Admin/Issuer — use local search inputs
     const q = (document.getElementById('emp-search-input')?.value||'').toLowerCase().trim();
@@ -2280,7 +2558,7 @@ function renderEmpHistory(){
   }
 
   if(!f.length){
-    tbody.innerHTML=`<tr class="empty-row"><td colspan="14">${isEmpRole?'📭 No tools issued yet.':'🔍 No records found.'}</td></tr>`;
+    tbody.innerHTML=`<tr class="empty-row"><td colspan="14">${isEmpRole?'✅ No pending tools — எல்லாமே return பண்ணிட்டீங்க!':'🔍 No records found.'}</td></tr>`;
     return;
   }
   tbody.innerHTML=f.map((r,i)=>`
@@ -2626,6 +2904,23 @@ function renderSettings(){
   document.getElementById('emp-count').textContent=empMaster.length;
   document.getElementById('tool-count').textContent=toolMaster.length;
   document.getElementById('users-count').textContent=appUsers.length;
+  // Pre-fill GitHub config
+  const cfg = ghGetConfig();
+  const tEl=document.getElementById('gh-token');
+  const oEl=document.getElementById('gh-owner');
+  const rEl=document.getElementById('gh-repo');
+  const fEl=document.getElementById('gh-file');
+  if(tEl) tEl.value=cfg.token;
+  if(oEl) oEl.value=cfg.owner;
+  if(rEl) rEl.value=cfg.repo;
+  if(fEl) fEl.value=cfg.file;
+  const syncEl=document.getElementById('gh-sync-status');
+  if(syncEl){
+    const last=localStorage.getItem('gh_last_push');
+    syncEl.textContent = cfg.token
+      ? (last ? '✅ Last sync: '+new Date(last).toLocaleString('en-IN') : '⚠️ Not synced yet')
+      : '⚠️ Not configured';
+  }
   // User list
   const ul=document.getElementById('user-mgmt-list');
   ul.innerHTML=appUsers.length?appUsers.map((u,i)=>{
@@ -2639,7 +2934,8 @@ function renderSettings(){
       </span>
       <span class="umi-actions">
         <button class="umi-btn edit-btn" onclick="changeUserRole(${i})" title="Change Role">🔄 Role</button>
-        <button class="umi-btn edit-btn" onclick="changeUserPin(${i})">✏️ PIN</button>
+        <button class="umi-btn edit-btn" onclick="changeUserPin(${i})">✏️ Password</button>
+        <button class="umi-btn edit-btn" onclick="resetUserPwd(${i})" title="Reset to Admin@123" style="color:var(--warning)">🔑 Reset</button>
         <button class="umi-btn" onclick="removeUser(${i})">🗑️</button>
       </span>
     </div>`;
@@ -2651,6 +2947,7 @@ function renderSettings(){
       <span>${e.name}</span>
       <span style="display:flex;align-items:center;gap:.4rem">
         <span class="mi-code">${e.id}</span>
+        <button class="mi-del" style="background:transparent;border:1px solid var(--warning);color:var(--warning);border-radius:5px;padding:.15rem .4rem;font-size:.65rem;cursor:pointer;" onclick="resetEmpPwd('${e.id}','${e.name.replace(/'/g,"\\'")}')">🔑</button>
         <button class="mi-del" onclick="removeEmp(${i})">✕</button>
       </span>
     </div>`).join(''):'<p style="font-size:.78rem;color:var(--text2);padding:.5rem 0">No employees added yet.</p>';
@@ -2708,6 +3005,28 @@ function toggleAdmin(i){
   showToast(`"${appUsers[i].name}" is now ${appUsers[i].isAdmin?'⭐ Admin':'🔧 Issuer'}!`);
 }
 
+function resetUserPwd(i){
+  const isAdminUser = appUsers[i].role==='admin' || appUsers[i].isAdmin===true;
+  const defaultPwd = isAdminUser ? 'Admin@123' : 'Pass@123';
+  showConfirm('Reset Password', `Reset password for "${appUsers[i].name}" to "${defaultPwd}"?`, ()=>{
+    appUsers[i].pin = defaultPwd;
+    saveUsers();
+    renderSettings();
+    addAudit('edit', `Password reset for "${appUsers[i].name}" — default password set`);
+    showToast(`"${appUsers[i].name}" password reset to ${defaultPwd}!`);
+  });
+}
+
+function resetEmpPwd(empId, empName){
+  showConfirm('Reset Employee Password', `Reset password for "${empName}"? They can create a new password on next login.`, ()=>{
+    const empPins = JSON.parse(localStorage.getItem('tc_emp_pins')||'{}');
+    delete empPins[empId];
+    localStorage.setItem('tc_emp_pins', JSON.stringify(empPins));
+    addAudit('edit', `Employee password reset for "${empName}" (${empId})`);
+    showToast(`"${empName}" password reset! They can create a new password on next login.`);
+  });
+}
+
 function changeUserPin(i){
   const newPwd=prompt(`Enter new password for "${appUsers[i].name}" (min 6 chars):`);
   if(!newPwd) return;
@@ -2755,7 +3074,10 @@ function uploadSAP(input){
       const iRemarks  = col('remarks');
 
       let added=0, skipped=0, empAdded=0, toolAdded=0;
-      const existingDocs = new Set(records.map(r=>r.sapDocNo).filter(Boolean));
+      const existingDocs = new Set([
+        ...records.map(r=>r.sapDocNo).filter(Boolean),
+        ...records.map(r=>r.sapReturnDoc).filter(Boolean)
+      ]);
 
       rows.forEach((row, i)=>{
         if(i===0) return;
@@ -2779,9 +3101,7 @@ function uploadSAP(input){
         if(matDoc && existingDocs.has(matDoc)){ skipped++; return; }
         if(matDoc) existingDocs.add(matDoc);
 
-        const status = movType === '311' ? 'Issued' : 'Returned';
-
-        // Parse date — handle dd.mm.yyyy / yyyy-mm-dd / dd/mm/yyyy
+        // Parse date
         let issueDateISO = todayISO();
         let issueDateFmt = postDate;
         try{
@@ -2800,31 +3120,57 @@ function uploadSAP(input){
           }
         } catch(ex){}
 
-        const rec = {
-          empId: vendorNo,
-          empName: vendorNm,
-          toolName: matText,
-          toolCode: matCode,
-          bookNo: ref || '—',
-          pageNo: '—',
-          qty: qty,
-          shift: '',
-          remarks: [subVend?`Sub-vendor: ${subVend}`:'', remarks].filter(Boolean).join(' | '),
-          issueDate: issueDateFmt,
-          issueTime: '',
-          issueDateISO: issueDateISO,
-          status: status,
-          returnDate: status==='Returned' ? issueDateFmt : '',
-          returnTime: '',
-          returnDateISO: status==='Returned' ? issueDateISO : '',
-          condition: status==='Returned' ? 'Good' : '',
-          returnRemarks: '',
-          sapDocNo: matDoc,
-          sapImport: true
-        };
-        records.push(rec);
-        added++;
-
+        if(movType === '312'){
+          // 312 = Return — find matching 311 record by Employee + Tool + Reference
+          const match = records.find(r=>
+            r.status === 'Issued' &&
+            r.empId === vendorNo &&
+            (r.toolCode === matCode || r.toolName === matText) &&
+            r.bookNo === ref &&
+            r.sapImport === true
+          );
+          if(match){
+            // Update existing record to Returned
+            match.status = 'Returned';
+            match.returnDate = issueDateFmt;
+            match.returnTime = '';
+            match.returnDateISO = issueDateISO;
+            match.condition = 'Good';
+            match.returnRemarks = remarks || '';
+            match.sapReturnDoc = matDoc;
+            added++;
+          } else {
+            // No matching 311 found — create standalone return record
+            const retRec = {
+              empId: vendorNo, empName: vendorNm,
+              toolName: matText, toolCode: matCode,
+              bookNo: ref||'—', pageNo:'—', qty, shift:'',
+              remarks: [subVend?`Sub-vendor: ${subVend}`:'', remarks].filter(Boolean).join(' | '),
+              issueDate: issueDateFmt, issueTime:'', issueDateISO,
+              status:'Returned',
+              returnDate: issueDateFmt, returnTime:'', returnDateISO: issueDateISO,
+              condition:'Good', returnRemarks: remarks||'',
+              sapDocNo: matDoc, sapImport: true
+            };
+            records.push(retRec);
+            added++;
+          }
+        } else {
+          // 311 = Issue — create new record
+          const rec = {
+            empId: vendorNo, empName: vendorNm,
+            toolName: matText, toolCode: matCode,
+            bookNo: ref||'—', pageNo:'—', qty, shift:'',
+            remarks: [subVend?`Sub-vendor: ${subVend}`:'', remarks].filter(Boolean).join(' | '),
+            issueDate: issueDateFmt, issueTime:'', issueDateISO,
+            status:'Issued',
+            returnDate:'', returnTime:'', returnDateISO:'',
+            condition:'', returnRemarks:'',
+            sapDocNo: matDoc, sapImport: true
+          };
+          records.push(rec);
+          added++;
+        }
         // Auto-add Employee Master
         if(vendorNo && vendorNm && !empMaster.find(e=>e.id===vendorNo)){
           empMaster.push({name:vendorNm, id:vendorNo});
@@ -3015,6 +3361,137 @@ function downloadExcel(){
   showToast('Excel downloaded! Sheet 3 = Audit Log (Admin protected)');
 }
 
+// ===== GITHUB SYNC =====
+function ghGetConfig(){
+  return {
+    token : localStorage.getItem('gh_token')||'',
+    owner : localStorage.getItem('gh_owner')||'',
+    repo  : localStorage.getItem('gh_repo') ||'',
+    file  : localStorage.getItem('gh_file') ||'toolcrib-data.json'
+  };
+}
+
+function ghSaveConfig(){
+  const t = document.getElementById('gh-token')?.value.trim();
+  const o = document.getElementById('gh-owner')?.value.trim();
+  const r = document.getElementById('gh-repo')?.value.trim();
+  const f = document.getElementById('gh-file')?.value.trim()||'toolcrib-data.json';
+  if(!t||!o||!r){ showToast('Please fill all GitHub fields!','error'); return; }
+  localStorage.setItem('gh_token', t);
+  localStorage.setItem('gh_owner', o);
+  localStorage.setItem('gh_repo',  r);
+  localStorage.setItem('gh_file',  f);
+  showToast('✅ GitHub config saved!');
+  renderSettings();
+}
+
+function ghClearConfig(){
+  ['gh_token','gh_owner','gh_repo','gh_file'].forEach(k=>localStorage.removeItem(k));
+  showToast('GitHub config cleared!');
+  renderSettings();
+}
+
+// Pack all app data into one JSON
+function ghPackData(){
+  return JSON.stringify({
+    records, empMaster, toolMaster, auditLog: auditLog.slice(-200),
+    appUsers: appUsers.map(u=>({...u})),
+    empPins: JSON.parse(localStorage.getItem('tc_emp_pins')||'{}'),
+    overdueHrs,
+    savedAt: new Date().toISOString()
+  }, null, 2);
+}
+
+// Push data to GitHub
+async function ghPush(){
+  const cfg = ghGetConfig();
+  if(!cfg.token||!cfg.owner||!cfg.repo){ showToast('GitHub not configured!','error'); return; }
+  const syncEl = document.getElementById('gh-sync-status');
+  if(syncEl) syncEl.textContent = '🔄 Syncing...';
+  try {
+    // Get current file SHA (needed for update)
+    const getRes = await fetch(
+      `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.file}`,
+      { headers:{ 'Authorization':`token ${cfg.token}`, 'Accept':'application/vnd.github.v3+json' }}
+    );
+    let sha = '';
+    if(getRes.ok){ const j=await getRes.json(); sha=j.sha||''; }
+
+    // Push new content
+    const content = btoa(unescape(encodeURIComponent(ghPackData())));
+    const pushRes = await fetch(
+      `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.file}`,
+      {
+        method:'PUT',
+        headers:{ 'Authorization':`token ${cfg.token}`, 'Content-Type':'application/json', 'Accept':'application/vnd.github.v3+json' },
+        body: JSON.stringify({
+          message: `Tool Crib sync — ${new Date().toLocaleString('en-IN')}`,
+          content,
+          ...(sha ? {sha} : {})
+        })
+      }
+    );
+    if(pushRes.ok){
+      localStorage.setItem('gh_last_push', new Date().toISOString());
+      if(syncEl) syncEl.textContent = '✅ Synced: '+new Date().toLocaleTimeString('en-IN',{hour12:false});
+      showToast('✅ Data synced to GitHub!');
+    } else {
+      const err = await pushRes.json();
+      if(syncEl) syncEl.textContent = '❌ Sync failed';
+      showToast('Sync failed: '+(err.message||pushRes.status),'error');
+    }
+  } catch(e){
+    if(syncEl) syncEl.textContent = '❌ Network error';
+    showToast('Network error: '+e.message,'error');
+  }
+}
+
+// Pull data from GitHub
+async function ghPull(silent){
+  const cfg = ghGetConfig();
+  if(!cfg.token||!cfg.owner||!cfg.repo) return;
+  if(!silent) showToast('🔄 Pulling latest data...');
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.file}`,
+      { headers:{ 'Authorization':`token ${cfg.token}`, 'Accept':'application/vnd.github.v3+json' }}
+    );
+    if(!res.ok){ if(!silent) showToast('No data found on GitHub yet.','error'); return; }
+    const json = await res.json();
+    const decoded = decodeURIComponent(escape(atob(json.content.replace(/\n/g,''))));
+    const data = JSON.parse(decoded);
+
+    // Compare timestamps — only pull if GitHub is newer
+    const ghTime = new Date(data.savedAt||0).getTime();
+    const myTime = new Date(localStorage.getItem('gh_last_push')||0).getTime();
+    if(!silent && ghTime <= myTime){ showToast('Already up to date!'); return; }
+
+    // Apply data
+    if(data.records)    { records=data.records; localStorage.setItem('tc_records',JSON.stringify(records)); }
+    if(data.empMaster)  { empMaster=data.empMaster; localStorage.setItem('tc_employees',JSON.stringify(empMaster)); }
+    if(data.toolMaster) { toolMaster=data.toolMaster; localStorage.setItem('tc_tools',JSON.stringify(toolMaster)); }
+    if(data.auditLog)   { auditLog=data.auditLog; localStorage.setItem('tc_audit',JSON.stringify(auditLog)); }
+    if(data.appUsers)   { appUsers=data.appUsers; localStorage.setItem('tc_users',JSON.stringify(appUsers)); }
+    if(data.empPins)    { localStorage.setItem('tc_emp_pins',JSON.stringify(data.empPins)); }
+    if(data.overdueHrs) { overdueHrs=data.overdueHrs; localStorage.setItem('tc_overdue_hrs',overdueHrs); }
+
+    localStorage.setItem('gh_last_push', data.savedAt||new Date().toISOString());
+    updateDashboard(); renderRecent();
+    const syncEl = document.getElementById('gh-sync-status');
+    if(syncEl) syncEl.textContent = '✅ Pulled: '+new Date().toLocaleTimeString('en-IN',{hour12:false});
+    if(!silent) showToast('✅ Latest data loaded!');
+  } catch(e){
+    if(!silent) showToast('Pull failed: '+e.message,'error');
+  }
+}
+
+// Auto-push after every save — hook into saveData
+const _origSaveData = saveData;
+saveData = function(){
+  _origSaveData();
+  if(ghGetConfig().token) setTimeout(ghPush, 500);
+};
+
 // ===== DARK MODE =====
 function toggleTheme(){
   const isDark = document.body.classList.toggle('dark');
@@ -3057,6 +3534,8 @@ initTheme();
 })();
 // Start at login screen always
 document.getElementById('login-screen').classList.remove('hide');
+// Auto-pull from GitHub on load (if configured)
+setTimeout(()=>{ if(ghGetConfig().token) ghPull(true); }, 1000);
 </script>
 </body>
 </html>
