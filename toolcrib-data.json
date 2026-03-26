@@ -4,6 +4,18 @@
   "toolMaster": [],
   "auditLog": [
     {
+      "type": "edit",
+      "msg": "New user \"Vijay\" added as admin",
+      "user": "Admin",
+      "time": "26/3/2026, 6:39:02 am"
+    },
+    {
+      "type": "delete",
+      "msg": "User \"Admin\" removed",
+      "user": "Admin",
+      "time": "26/3/2026, 6:38:59 am"
+    },
+    {
       "type": "login",
       "msg": "Admin logged in as admin",
       "user": "Admin",
@@ -36,15 +48,14 @@
   ],
   "appUsers": [
     {
-      "name": "Admin",
-      "pin": "Admin@123",
-      "avatar": "👷",
-      "isAdmin": true,
+      "name": "Vijay",
+      "pin": "Vijay@2026",
       "role": "admin",
-      "lastLogin": "06:37 26/03/2026"
+      "isAdmin": true,
+      "avatar": "👷"
     }
   ],
   "empPins": {},
   "overdueHrs": 24,
-  "savedAt": "2026-03-26T01:07:52.655Z"
+  "savedAt": "2026-03-26T01:09:12.049Z"
 }
