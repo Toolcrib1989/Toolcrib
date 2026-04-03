@@ -1,96 +1,26 @@
 {
   "records": [],
-  "empMaster": [
-    {
-      "name": "Vijayapandian",
-      "id": "4261"
-    }
-  ],
-  "toolMaster": [
-    {
-      "name": "2LB HAMMER",
-      "code": "G2403586"
-    }
-  ],
+  "empMaster": [],
+  "toolMaster": [],
   "auditLog": [
     {
       "type": "login",
-      "msg": "Vijay logged in as admin",
-      "user": "Vijay",
-      "time": "26/3/2026, 6:48:37 am"
-    },
-    {
-      "type": "edit",
-      "msg": "Employee password reset for \"Vijayapandian\" (4261)",
-      "user": "Vijay",
-      "time": "26/3/2026, 6:41:29 am"
-    },
-    {
-      "type": "login",
-      "msg": "Vijay logged in as admin",
-      "user": "Vijay",
-      "time": "26/3/2026, 6:40:00 am"
-    },
-    {
-      "type": "lock",
-      "msg": "Admin logged out",
-      "user": "Admin",
-      "time": "26/3/2026, 6:39:45 am"
-    },
-    {
-      "type": "edit",
-      "msg": "New user \"Vijay\" added as admin",
-      "user": "Admin",
-      "time": "26/3/2026, 6:39:02 am"
-    },
-    {
-      "type": "delete",
-      "msg": "User \"Admin\" removed",
-      "user": "Admin",
-      "time": "26/3/2026, 6:38:59 am"
-    },
-    {
-      "type": "login",
       "msg": "Admin logged in as admin",
       "user": "Admin",
-      "time": "26/3/2026, 6:37:14 am"
-    },
-    {
-      "type": "login",
-      "msg": "Admin logged in as admin",
-      "user": "Admin",
-      "time": "26/3/2026, 6:36:07 am"
-    },
-    {
-      "type": "login",
-      "msg": "Admin logged in as admin",
-      "user": "Admin",
-      "time": "22/3/2026, 9:44:30 am"
-    },
-    {
-      "type": "lock",
-      "msg": "Admin logged out",
-      "user": "Admin",
-      "time": "21/3/2026, 6:03:43 pm"
-    },
-    {
-      "type": "login",
-      "msg": "Admin logged in as admin",
-      "user": "Admin",
-      "time": "21/3/2026, 6:03:01 pm"
+      "time": "3/4/2026, 9:57:49 pm"
     }
   ],
   "appUsers": [
     {
-      "name": "Vijay",
-      "pin": "Vijay@2026",
-      "role": "admin",
-      "isAdmin": true,
+      "name": "Admin",
+      "pin": "Admin@123",
       "avatar": "👷",
-      "lastLogin": "06:48 26/03/2026"
+      "isAdmin": true,
+      "role": "admin",
+      "lastLogin": "21:57 03/04/2026"
     }
   ],
   "empPins": {},
   "overdueHrs": 24,
-  "savedAt": "2026-03-26T01:19:01.946Z"
+  "savedAt": "2026-04-03T16:28:36.911Z"
 }
